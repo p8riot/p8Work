@@ -1,0 +1,2506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+TransportView 0.1.6
+Structured Mode source edition
+
+Source map
+  CSS-01  Theme + global defaults
+  CSS-02  App shell + navigation
+  CSS-03  Cards + forms + controls
+  CSS-04  Schedule + tables + status
+  CSS-05  Dialogs + upload + print
+  CSS-06  Responsive rules
+
+  HTML-01 Header + navigation
+  HTML-02 Dashboard
+  HTML-03 Appointments
+  HTML-04 Staff + shifts
+  HTML-05 Locations + custom options
+  HTML-06 Import/export + email
+  HTML-07 Settings + data cleanup
+  HTML-08 Dialogs
+
+  JS-01   Build info + configuration
+  JS-02   Data model + persistence
+  JS-03   Date/time + scheduling helpers
+  JS-04   Assignment engine
+  JS-05   Rendering
+  JS-06   CRUD + interaction handlers
+  JS-07   Import/export + printing/email
+  JS-08   Cleanup + startup
+-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#171717">
+    <meta name="description" content="Local-first weekly transport scheduling tool.">
+    <title>TransportView</title>
+
+    <style>
+/* =====================================================================
+[CSS-01] THEME + GLOBAL DEFAULTS
+===================================================================== */
+:root {
+    --bg: #0d0f12;
+    --panel: #171a1f;
+    --panel-2: #20242b;
+    --panel-3: #2a3038;
+    --text: #f5f7fa;
+    --muted: #aeb6c2;
+    --border: #3a414c;
+    --accent: #7dd3fc;
+    --accent-2: #38bdf8;
+    --good: #86efac;
+    --warn: #fde68a;
+    --bad: #fca5a5;
+    --info: #c4b5fd;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --radius: 14px;
+    --touch: 44px;
+    --header-overlay: rgba(13, 15, 18, 0.96);
+    --nav-active-bg: rgba(56, 189, 248, 0.14);
+    --input-bg: #101318;
+    --appt-bg: #12161b;
+    --good-bg: rgba(125, 211, 252, 0.08);
+    --warn-bg: rgba(234, 179, 8, 0.08);
+    --bad-bg: rgba(239, 68, 68, 0.08);
+    --dropzone-bg: #101318;
+}
+
+html[data-theme="midnight"] {
+    color-scheme: dark;
+}
+
+html[data-theme="light"] {
+    color-scheme: light;
+    --bg: #eef2f7;
+    --panel: #ffffff;
+    --panel-2: #f3f6fa;
+    --panel-3: #e8edf4;
+    --text: #16202b;
+    --muted: #526170;
+    --border: #c7d0dc;
+    --accent: #0b7db9;
+    --accent-2: #1187c6;
+    --good: #1d7c45;
+    --warn: #8a5c00;
+    --bad: #b63b46;
+    --info: #5b50c8;
+    --shadow: 0 10px 24px rgba(26, 44, 69, 0.08);
+    --header-overlay: rgba(255, 255, 255, 0.96);
+    --nav-active-bg: rgba(17, 135, 198, 0.12);
+    --input-bg: #ffffff;
+    --appt-bg: #f8fafc;
+    --good-bg: rgba(29, 124, 69, 0.08);
+    --warn-bg: rgba(138, 92, 0, 0.08);
+    --bad-bg: rgba(182, 59, 70, 0.08);
+    --dropzone-bg: #f8fafc;
+}
+
+html[data-theme="ocean"] {
+    color-scheme: dark;
+    --bg: #07131d;
+    --panel: #0d2232;
+    --panel-2: #133246;
+    --panel-3: #19445b;
+    --text: #edf8ff;
+    --muted: #a6c5d7;
+    --border: #2e5a71;
+    --accent: #7dd3fc;
+    --accent-2: #38bdf8;
+    --good: #86efac;
+    --warn: #fde68a;
+    --bad: #fda4af;
+    --info: #c4b5fd;
+    --header-overlay: rgba(7, 19, 29, 0.96);
+    --nav-active-bg: rgba(56, 189, 248, 0.18);
+    --input-bg: #0a1a27;
+    --appt-bg: #0c1d2b;
+    --dropzone-bg: #0a1a27;
+}
+
+html[data-theme="forest"] {
+    color-scheme: dark;
+    --bg: #0c1511;
+    --panel: #14231b;
+    --panel-2: #1d3226;
+    --panel-3: #284132;
+    --text: #edf8f0;
+    --muted: #adc7b7;
+    --border: #3b5a48;
+    --accent: #9ae6b4;
+    --accent-2: #68d391;
+    --good: #b9f6ca;
+    --warn: #f6e05e;
+    --bad: #feb2b2;
+    --info: #c4b5fd;
+    --header-overlay: rgba(12, 21, 17, 0.96);
+    --nav-active-bg: rgba(104, 211, 145, 0.18);
+    --input-bg: #102018;
+    --appt-bg: #12241b;
+    --dropzone-bg: #102018;
+}
+
+html[data-theme="plum"] {
+    color-scheme: dark;
+    --bg: #160d1d;
+    --panel: #23152d;
+    --panel-2: #311d3e;
+    --panel-3: #432853;
+    --text: #f8f2ff;
+    --muted: #cab9da;
+    --border: #5e4871;
+    --accent: #d8b4fe;
+    --accent-2: #c084fc;
+    --good: #bbf7d0;
+    --warn: #fde68a;
+    --bad: #fda4af;
+    --info: #ddd6fe;
+    --header-overlay: rgba(22, 13, 29, 0.96);
+    --nav-active-bg: rgba(192, 132, 252, 0.18);
+    --input-bg: #1a1021;
+    --appt-bg: #1d1225;
+    --dropzone-bg: #1a1021;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    background: var(--bg);
+    color-scheme: dark;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.45;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button,
+select,
+input,
+textarea {
+    min-height: var(--touch);
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: var(--accent);
+}
+
+:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* =====================================================================
+[CSS-02] APP SHELL + NAVIGATION
+===================================================================== */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--header-overlay);
+    backdrop-filter: blur(14px);
+}
+
+.brand-row {
+    min-width: 0;
+}
+
+.brand-row h1 {
+    margin: 0;
+    color: var(--accent);
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+}
+
+.brand-row p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.nav-scroll {
+    position: sticky;
+    top: 78px;
+    z-index: 20;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    scrollbar-width: thin;
+}
+
+.nav-btn {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--text);
+}
+
+.nav-btn[aria-selected="true"] {
+    border-color: var(--accent-2);
+    background: var(--nav-active-bg);
+    color: var(--accent);
+}
+
+main {
+    width: min(100%, 1400px);
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+.section-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.section-head h2,
+.section-head h3 {
+    margin: 0;
+}
+
+.section-head p {
+    margin: 4px 0 0;
+    color: var(--muted);
+}
+
+.toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* =====================================================================
+[CSS-03] CARDS + FORMS + CONTROLS
+===================================================================== */
+.card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+}
+
+.card-body {
+    padding: 14px;
+}
+
+.grid-2,
+.grid-3,
+.grid-4 {
+    display: grid;
+    gap: 12px;
+}
+
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.metric {
+    padding: 14px;
+}
+
+.metric strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.65rem;
+}
+
+.metric small {
+    color: var(--muted);
+}
+
+.btn {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    background: var(--panel-2);
+    color: var(--text);
+}
+
+.btn:hover {
+    border-color: #596273;
+}
+
+.btn.primary {
+    border-color: var(--accent-2);
+    background: var(--accent-2);
+    color: #04222f;
+    font-weight: 800;
+}
+
+.btn.good {
+    border-color: #4ade80;
+    color: var(--good);
+}
+
+.btn.warn {
+    border-color: #eab308;
+    color: var(--warn);
+}
+
+.btn.danger {
+    border-color: #ef4444;
+    color: var(--bad);
+}
+
+.btn.ghost {
+    background: transparent;
+}
+
+.field {
+    display: grid;
+    gap: 6px;
+}
+
+.field label,
+.field .label {
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 10px;
+    background: var(--input-bg);
+    color: var(--text);
+}
+
+textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.inline-check {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.inline-check input {
+    width: auto;
+    min-height: auto;
+}
+
+.help {
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 0.78rem;
+}
+
+.pill.good { color: var(--good); border-color: #3f7f53; }
+.pill.warn { color: var(--warn); border-color: #8c752b; }
+.pill.bad { color: var(--bad); border-color: #8f3b3b; }
+.pill.info { color: var(--info); border-color: #67589d; }
+
+.empty-state {
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--muted);
+}
+
+/* =====================================================================
+[CSS-04] SCHEDULE + TABLES + STATUS
+===================================================================== */
+.week-bar {
+    display: grid;
+    grid-template-columns: auto minmax(180px, 1fr) auto auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.week-label {
+    min-width: 0;
+    font-weight: 800;
+}
+
+.day-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(220px, 1fr));
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+}
+
+.day-card {
+    min-width: 220px;
+    scroll-snap-align: start;
+}
+
+.day-card header {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+}
+
+.day-card header strong {
+    display: block;
+}
+
+.day-card header small {
+    color: var(--muted);
+}
+
+.appt-list {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+}
+
+.appt {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    background: var(--appt-bg);
+}
+
+.appt-top {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.appt-time {
+    font-weight: 900;
+    color: var(--accent);
+}
+
+.appt-client {
+    font-weight: 800;
+}
+
+.appt-meta {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.appt-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.appt-actions .btn {
+    min-height: 36px;
+    padding: 5px 8px;
+    font-size: 0.8rem;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.status-box {
+    border-left: 4px solid var(--accent);
+    padding: 10px 12px;
+    background: var(--good-bg);
+}
+
+.status-box.warn {
+    border-left-color: #eab308;
+    background: var(--warn-bg);
+}
+
+.status-box.bad {
+    border-left-color: #ef4444;
+    background: var(--bad-bg);
+}
+
+.readiness-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.readiness-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+/* =====================================================================
+[CSS-05] DIALOGS + UPLOAD + PRINT
+===================================================================== */
+dialog {
+    width: min(92vw, 760px);
+    max-height: 88dvh;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.65);
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.dialog-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+}
+
+.dialog-head h3 {
+    margin: 0;
+}
+
+.dialog-body {
+    padding: 14px;
+}
+
+.dialog-actions {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--panel);
+}
+
+.drop-zone {
+    display: grid;
+    place-items: center;
+    min-height: 170px;
+    border: 2px dashed #4d5968;
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    background: var(--input-bg);
+}
+
+.drop-zone.dragover {
+    border-color: var(--accent-2);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.upload-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.upload-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.footer {
+    padding: 30px 16px calc(30px + env(safe-area-inset-bottom));
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+@media print {
+    html {
+        background: #ffffff !important;
+        color-scheme: light;
+    }
+
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    .app-header,
+    .nav-scroll,
+    .toolbar,
+    .btn,
+    .footer,
+    .no-print,
+    #metrics,
+    #readinessPanel,
+    #view-dashboard > .section-head p,
+    dialog,
+    #toast {
+        display: none !important;
+    }
+
+    main {
+        width: 100%;
+        padding: 0;
+    }
+
+    .view {
+        display: none !important;
+    }
+
+    #view-dashboard {
+        display: block !important;
+    }
+
+    .card,
+    .day-card,
+    .day-card header,
+    .appt,
+    .appt-list,
+    .empty-state {
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        border-color: #999999 !important;
+        break-inside: avoid;
+    }
+
+    .day-grid {
+        display: block;
+        overflow: visible;
+    }
+
+    .day-card {
+        margin-bottom: 12px;
+    }
+
+    .day-card header {
+        border-bottom: 1px solid #bbbbbb !important;
+    }
+
+    .day-card header strong,
+    .appt-client,
+    .week-label,
+    .section-head h2,
+    .section-head p,
+    .card h3,
+    .appt-top,
+    .appt-time {
+        color: #000000 !important;
+    }
+
+    .day-card header small,
+    .appt-meta,
+    .help,
+    .empty-state,
+    small {
+        color: #555555 !important;
+    }
+
+    .pill {
+        background: #ffffff !important;
+    }
+}
+
+
+/* =====================================================================
+[CSS-06] RESPONSIVE RULES
+===================================================================== */
+@media (max-width: 1024px) {
+    .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+    .app-header {
+        grid-template-columns: 1fr;
+    }
+
+    .header-actions {
+        justify-content: flex-start;
+    }
+
+    .nav-scroll {
+        top: 128px;
+    }
+
+    main {
+        padding: 12px;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .week-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .week-label {
+        grid-column: 1 / -1;
+        order: -1;
+    }
+
+    .section-head {
+        display: grid;
+    }
+}
+
+@media (hover: none) and (pointer: coarse) {
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}
+    </style>
+
+  <style id="p8work-integration-style">
+    .p8work-return-link {
+      position: relative; z-index: 2147483000; display: none; align-items: center; gap: .35rem; min-height: 38px;
+      margin: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) 6px max(8px, env(safe-area-inset-left, 0px));
+      padding: .45rem .72rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.28);
+      background: rgba(13, 30, 48, .92); color: #fff; text-decoration: none; font: 600 13px/1.1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      box-shadow: 0 7px 20px rgba(0,0,0,.22); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .p8work-return-link:hover { background: rgba(18, 51, 78, .97); }
+    .p8work-return-link:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 2px; }
+    html.p8work-hosted .p8work-return-link { display: inline-flex; }
+    @media print { .p8work-return-link { display: none !important; } }
+  </style>
+  <script id="p8work-integration-script">
+  (function () {
+    "use strict";
+    var TOOL_ID = "transportview";
+    var PRODUCT_VERSION = "0.1.6";
+    var META_KEY = "p8work-tool-meta:" + TOOL_ID;
+    window.p8WorkTouchMeta = function () {
+      try {
+        var previous = {};
+        try { previous = JSON.parse(localStorage.getItem(META_KEY) || "{}"); } catch (e) { previous = {}; }
+        localStorage.setItem(META_KEY, JSON.stringify({
+          toolId: TOOL_ID,
+          productVersion: PRODUCT_VERSION,
+          schemaVersion: 1,
+          hubContract: 1,
+          lastModifiedAt: new Date().toISOString()
+        }));
+      } catch (e) { /* Hub metadata is best-effort and never blocks the tool. */ }
+    };
+    document.addEventListener("DOMContentLoaded", function () {
+      var hosted = false;
+      try { hosted = new URLSearchParams(window.location.search).get("hub") === "1"; } catch (e) {}
+      if (!hosted) return;
+      var showHome = true;
+      try { showHome = new URLSearchParams(window.location.search).get("home") !== "0"; } catch (e) {}
+      if (!showHome) return;
+      document.documentElement.classList.add("p8work-hosted");
+      var link = document.createElement("a");
+      link.className = "p8work-return-link";
+      link.href = "../index.html";
+      link.setAttribute("aria-label", "Return to p8Work");
+      link.textContent = "← p8Work";
+      document.body.insertBefore(link, document.body.firstChild);
+    });
+  }());
+  </script>
+</head>
+<body>
+
+<!-- ==================================================================
+     [HTML-01] HEADER + NAVIGATION
+     ================================================================== -->
+<header class="app-header">
+    <div class="brand-row">
+        <h1>TransportView</h1>
+        <p>Weekly transport planning • v0.1.6</p>
+    </div>
+    <div class="header-actions no-print">
+        <button class="btn primary" type="button" id="quickAddBtn">+ Appointment</button>
+        <button class="btn" type="button" id="printBtn">Print / Save PDF</button>
+    </div>
+</header>
+
+<nav class="nav-scroll no-print" aria-label="TransportView sections">
+    <button class="nav-btn" data-view="dashboard" aria-selected="true">Week</button>
+    <button class="nav-btn" data-view="appointments" aria-selected="false">Appointments</button>
+    <button class="nav-btn" data-view="staff" aria-selected="false">Staff & Shifts</button>
+    <button class="nav-btn" data-view="locations" aria-selected="false">Locations</button>
+    <button class="nav-btn" data-view="import" aria-selected="false">Import / Export</button>
+    <button class="nav-btn" data-view="settings" aria-selected="false">Settings</button>
+</nav>
+
+<main>
+
+<!-- ==================================================================
+     [HTML-02] DASHBOARD
+     ================================================================== -->
+<section class="view active" id="view-dashboard">
+    <div class="week-bar no-print">
+        <button class="btn" type="button" id="prevWeekBtn">← Previous</button>
+        <div class="week-label" id="weekLabel"></div>
+        <button class="btn" type="button" id="nextWeekBtn">Next →</button>
+        <button class="btn" type="button" id="todayWeekBtn">This Week</button>
+    </div>
+
+    <div class="grid-4" id="metrics"></div>
+
+    <div class="section-head" style="margin-top:16px;">
+        <div>
+            <h2>Weekly Transport Schedule</h2>
+            <p>Automatic assignments are suggestions. Manual assignments stay in your control.</p>
+        </div>
+        <div class="toolbar no-print">
+            <button class="btn primary" type="button" id="autoAssignBtn">Auto Assign Unassigned</button>
+            <button class="btn" type="button" id="readinessBtn">Run Readiness Check</button>
+        </div>
+    </div>
+
+    <div id="readinessPanel" class="card" hidden></div>
+    <div class="day-grid" id="weekGrid" aria-live="polite"></div>
+</section>
+
+<!-- ==================================================================
+     [HTML-03] APPOINTMENTS
+     ================================================================== -->
+<section class="view" id="view-appointments">
+    <div class="section-head">
+        <div>
+            <h2>Appointments</h2>
+            <p>Add, edit, cancel, lock, or manually assign any appointment.</p>
+        </div>
+        <button class="btn primary" type="button" id="addAppointmentBtn">+ Add Appointment</button>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th><th>Time</th><th>Client</th><th>Location</th><th>Type</th><th>Transporter</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="appointmentsTableBody"></tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ==================================================================
+     [HTML-04] STAFF + SHIFTS
+     ================================================================== -->
+<section class="view" id="view-staff">
+    <div class="section-head">
+        <div>
+            <h2>Staff & Shifts</h2>
+            <p>Upload a monthly schedule later, or manage staff and daily shifts directly here.</p>
+        </div>
+        <div class="toolbar">
+            <button class="btn" type="button" id="addStaffBtn">+ Staff</button>
+            <button class="btn primary" type="button" id="addShiftBtn">+ Shift</button>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-body">
+                <h3>Staff Library</h3>
+                <div id="staffList"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>Shifts for Selected Week</h3>
+                <div id="shiftList"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================================================================
+     [HTML-05] LOCATIONS + CUSTOM OPTIONS
+     ================================================================== -->
+<section class="view" id="view-locations">
+    <div class="section-head">
+        <div>
+            <h2>Locations & Custom Options</h2>
+            <p>Only a location name is required. All travel and appointment details are optional.</p>
+        </div>
+        <button class="btn primary" type="button" id="addLocationBtn">+ Location</button>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-body">
+                <h3>Location Library</h3>
+                <div id="locationList"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>Custom Transport Types</h3>
+                <div class="field">
+                    <label for="customTypeInput">Add a custom option</label>
+                    <div class="toolbar">
+                        <input id="customTypeInput" type="text" placeholder="Example: Family Transport">
+                        <button class="btn" type="button" id="addCustomTypeBtn">Add</button>
+                    </div>
+                </div>
+                <div id="customTypeList" style="margin-top:12px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================================================================
+     [HTML-06] IMPORT / EXPORT + EMAIL
+     ================================================================== -->
+<section class="view" id="view-import">
+    <div class="section-head">
+        <div>
+            <h2>Import / Export</h2>
+            <p>Back up editable data, import supported files, and generate the Monday email.</p>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-body">
+                <h3>Source Import</h3>
+                <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Upload or drop files">
+                    <div>
+                        <strong>Drop files here or click to upload</strong>
+                        <p class="help">CSV, JSON, and TXT are parsed in this build. Images, PDF, DOCX, XLSX, and other files can be staged for manual review.</p>
+                    </div>
+                    <input id="fileInput" type="file" multiple hidden accept=".json,.csv,.txt,.doc,.docx,.pdf,.xls,.xlsx,image/*">
+                </div>
+                <div class="upload-list" id="uploadList"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Backups & Exports</h3>
+                <div class="toolbar">
+                    <button class="btn" type="button" id="exportBackupBtn">Export Full Backup</button>
+                    <button class="btn" type="button" id="exportCsvBtn">Export Appointments CSV</button>
+                    <button class="btn" type="button" id="importBackupBtn">Import Backup</button>
+                    <input id="backupInput" type="file" hidden accept="application/json,.json">
+                </div>
+                <p class="help">Full backups preserve editable records, settings, custom options, archives, and assignments.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Monday Email Builder</h3>
+                <div class="field">
+                    <label for="emailSubject">Subject</label>
+                    <input id="emailSubject" type="text">
+                </div>
+                <div class="field" style="margin-top:10px;">
+                    <label for="emailBody">Email body</label>
+                    <textarea id="emailBody" rows="14"></textarea>
+                </div>
+                <div class="toolbar" style="margin-top:10px;">
+                    <button class="btn primary" type="button" id="generateEmailBtn">Generate From Week</button>
+                    <button class="btn" type="button" id="copyEmailBtn">Copy Email</button>
+                    <button class="btn" type="button" id="saveEmailTxtBtn">Save .txt</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Weekly Archive</h3>
+                <div class="toolbar">
+                    <button class="btn" type="button" id="archiveWeekBtn">Archive Current Week</button>
+                </div>
+                <div id="archiveList" style="margin-top:12px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================================================================
+     [HTML-07] SETTINGS + DATA CLEANUP
+     ================================================================== -->
+<section class="view" id="view-settings">
+    <div class="section-head">
+        <div>
+            <h2>Settings & Data</h2>
+            <p>Control scheduling defaults, color theme, assignment behavior, and deletion levels.</p>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-body">
+                <h3>Transport Defaults</h3>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="settingTravelOut">Default travel out (minutes)</label>
+                        <input id="settingTravelOut" type="number" min="0" step="5">
+                    </div>
+                    <div class="field">
+                        <label for="settingDuration">Default appointment duration (minutes)</label>
+                        <input id="settingDuration" type="number" min="0" step="5">
+                    </div>
+                    <div class="field">
+                        <label for="settingTravelBack">Default return travel (minutes)</label>
+                        <input id="settingTravelBack" type="number" min="0" step="5">
+                    </div>
+                    <div class="field">
+                        <label for="settingSafety">End-of-shift safety buffer (minutes)</label>
+                        <input id="settingSafety" type="number" min="0" step="5">
+                    </div>
+                </div>
+                <div class="field" style="margin-top:10px;">
+                    <label for="settingPrimary">Primary transporter preference</label>
+                    <select id="settingPrimary"></select>
+                    <div class="help">If eligible, Auto Assign prefers this staff member before considering others.</div>
+                </div>
+                <div class="field" style="margin-top:10px;">
+                    <label for="settingTheme">Color theme</label>
+                    <select id="settingTheme">
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Light</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="forest">Forest</option>
+                        <option value="plum">Plum</option>
+                    </select>
+                    <div class="help">This changes the app's interface only. Print output stays clean and light.</div>
+                </div>
+                <button class="btn primary" type="button" id="saveSettingsBtn" style="margin-top:12px;">Save Settings</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>Data Cleanup & Reset Center</h3>
+                <div class="readiness-list">
+                    <button class="btn warn" type="button" data-cleanup="week">Clear Current Week</button>
+                    <button class="btn warn" type="button" data-cleanup="history">Delete Schedule History Only</button>
+                    <button class="btn warn" type="button" data-cleanup="personal">Delete Personal / Operational Data</button>
+                    <button class="btn warn" type="button" data-cleanup="custom">Reset Customization</button>
+                    <button class="btn danger" type="button" data-cleanup="factory">Factory Reset</button>
+                </div>
+                <p class="help">Every destructive action requires confirmation. Export a backup first if you may need the data later.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="footer">
+    Built using the p8Core App Builder
+</footer>
+
+<div id="toast" class="sr-only" aria-live="polite"></div>
+
+<!-- ==================================================================
+     [HTML-08] DIALOGS
+     ================================================================== -->
+<dialog id="appointmentDialog">
+    <form method="dialog" id="appointmentForm">
+        <div class="dialog-head">
+            <h3 id="appointmentDialogTitle">Appointment</h3>
+            <button class="btn ghost" value="cancel" type="submit">Close</button>
+        </div>
+        <div class="dialog-body">
+            <input type="hidden" id="apptId">
+            <div class="grid-2">
+                <div class="field">
+                    <label for="apptDate">Date</label>
+                    <input id="apptDate" type="date" required>
+                </div>
+                <div class="field">
+                    <label for="apptTime">Appointment time</label>
+                    <input id="apptTime" type="time">
+                </div>
+                <div class="field">
+                    <label for="apptClient">Client</label>
+                    <input id="apptClient" type="text" placeholder="Initials or name">
+                </div>
+                <div class="field">
+                    <label for="apptLocation">Location</label>
+                    <input id="apptLocation" list="locationDatalist" type="text" placeholder="Type or select a saved location">
+                    <datalist id="locationDatalist"></datalist>
+                </div>
+                <div class="field">
+                    <label for="apptType">Transport type</label>
+                    <select id="apptType"></select>
+                </div>
+                <div class="field">
+                    <label for="apptStatus">Status</label>
+                    <select id="apptStatus">
+                        <option value=""></option>
+                        <option value="N/A">N/A</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Tentative">Tentative</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Completed">Completed</option>
+                        <option value="No-show">No-show</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="apptTransporter">Transporter</label>
+                    <select id="apptTransporter"></select>
+                </div>
+                <div class="field">
+                    <label for="apptPickupTime">Expected pickup time (optional)</label>
+                    <input id="apptPickupTime" type="time">
+                </div>
+                <div class="field">
+                    <label for="apptDuration">Appointment duration override (minutes)</label>
+                    <input id="apptDuration" type="number" min="0" step="5" placeholder="Use default/location">
+                </div>
+                <div class="field">
+                    <label for="apptTravelOut">Travel out override (minutes)</label>
+                    <input id="apptTravelOut" type="number" min="0" step="5" placeholder="Use default/location">
+                </div>
+                <div class="field">
+                    <label for="apptTravelBack">Travel back override (minutes)</label>
+                    <input id="apptTravelBack" type="number" min="0" step="5" placeholder="Use default/location">
+                </div>
+                <div class="field">
+                    <label for="apptSafety">Safety buffer override (minutes)</label>
+                    <input id="apptSafety" type="number" min="0" step="5" placeholder="Use default">
+                </div>
+            </div>
+            <div class="field" style="margin-top:10px;">
+                <label for="apptNotes">Notes</label>
+                <textarea id="apptNotes"></textarea>
+            </div>
+            <label class="inline-check" style="margin-top:10px;">
+                <input id="apptLocked" type="checkbox">
+                <span>Lock this assignment so Auto Assign will not change it</span>
+            </label>
+            <div id="assignmentExplain" class="status-box" style="margin-top:12px;" hidden></div>
+        </div>
+        <div class="dialog-actions">
+            <button class="btn danger" id="deleteAppointmentBtn" type="button">Delete</button>
+            <button class="btn" type="submit" value="cancel">Cancel</button>
+            <button class="btn primary" id="saveAppointmentBtn" type="button">Save Appointment</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="staffDialog">
+    <form method="dialog">
+        <div class="dialog-head">
+            <h3>Staff Member</h3>
+            <button class="btn ghost" value="cancel" type="submit">Close</button>
+        </div>
+        <div class="dialog-body">
+            <input id="staffId" type="hidden">
+            <div class="field">
+                <label for="staffName">Name</label>
+                <input id="staffName" type="text" required>
+            </div>
+            <div class="field" style="margin-top:10px;">
+                <label for="staffAliases">Aliases / initials (comma separated, optional)</label>
+                <input id="staffAliases" type="text" placeholder="JD, John D">
+            </div>
+            <label class="inline-check" style="margin-top:10px;">
+                <input id="staffArchived" type="checkbox">
+                <span>Archive this staff member</span>
+            </label>
+        </div>
+        <div class="dialog-actions">
+            <button class="btn" type="submit" value="cancel">Cancel</button>
+            <button class="btn primary" id="saveStaffBtn" type="button">Save</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="shiftDialog">
+    <form method="dialog">
+        <div class="dialog-head">
+            <h3>Shift</h3>
+            <button class="btn ghost" value="cancel" type="submit">Close</button>
+        </div>
+        <div class="dialog-body">
+            <input id="shiftId" type="hidden">
+            <div class="grid-2">
+                <div class="field">
+                    <label for="shiftStaff">Staff</label>
+                    <select id="shiftStaff"></select>
+                </div>
+                <div class="field">
+                    <label for="shiftDate">Date</label>
+                    <input id="shiftDate" type="date" required>
+                </div>
+                <div class="field">
+                    <label for="shiftStart">Start</label>
+                    <input id="shiftStart" type="time" required>
+                </div>
+                <div class="field">
+                    <label for="shiftEnd">End</label>
+                    <input id="shiftEnd" type="time" required>
+                </div>
+            </div>
+            <label class="inline-check" style="margin-top:10px;">
+                <input id="shiftCalloff" type="checkbox">
+                <span>Call-off / unavailable for this shift</span>
+            </label>
+            <div class="field" style="margin-top:10px;">
+                <label for="shiftNotes">Notes</label>
+                <textarea id="shiftNotes"></textarea>
+            </div>
+        </div>
+        <div class="dialog-actions">
+            <button class="btn danger" id="deleteShiftBtn" type="button">Delete</button>
+            <button class="btn" type="submit" value="cancel">Cancel</button>
+            <button class="btn primary" id="saveShiftBtn" type="button">Save</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="locationDialog">
+    <form method="dialog">
+        <div class="dialog-head">
+            <h3>Location</h3>
+            <button class="btn ghost" value="cancel" type="submit">Close</button>
+        </div>
+        <div class="dialog-body">
+            <input id="locationId" type="hidden">
+            <div class="field">
+                <label for="locationName">Name</label>
+                <input id="locationName" type="text" required>
+            </div>
+            <div class="field" style="margin-top:10px;">
+                <label for="locationAddress">Address (optional)</label>
+                <input id="locationAddress" type="text">
+            </div>
+            <div class="grid-3" style="margin-top:10px;">
+                <div class="field">
+                    <label for="locationTravel">Travel time (minutes)</label>
+                    <input id="locationTravel" type="number" min="0" step="5">
+                </div>
+                <div class="field">
+                    <label for="locationDuration">Typical duration (minutes)</label>
+                    <input id="locationDuration" type="number" min="0" step="5">
+                </div>
+                <div class="field">
+                    <label for="locationReturn">Return travel (minutes)</label>
+                    <input id="locationReturn" type="number" min="0" step="5">
+                </div>
+            </div>
+            <label class="inline-check" style="margin-top:10px;">
+                <input id="locationConsult" type="checkbox">
+                <span>Consultation form reminder usually applies</span>
+            </label>
+            <div class="field" style="margin-top:10px;">
+                <label for="locationNotes">Notes</label>
+                <textarea id="locationNotes"></textarea>
+            </div>
+        </div>
+        <div class="dialog-actions">
+            <button class="btn danger" id="deleteLocationBtn" type="button">Delete</button>
+            <button class="btn" type="submit" value="cancel">Cancel</button>
+            <button class="btn primary" id="saveLocationBtn" type="button">Save</button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+// ============================================================================
+// [JS-01] BUILD INFORMATION + CONFIGURATION
+// ============================================================================
+const BUILD = Object.freeze({
+    name: "TransportView",
+    version: "0.1.6",
+    schemaVersion: 1,
+    storageKey: "transportview-state-v1"
+});
+
+const DEFAULT_TRANSPORT_TYPES = [
+    "Drop Off + Pick Up",
+    "Wait With Client",
+    "Drop Off Only",
+    "Pick Up Only"
+];
+
+const THEME_COLORS = Object.freeze({
+    midnight: "#171717",
+    light: "#f3f6fa",
+    ocean: "#0d2232",
+    forest: "#14231b",
+    plum: "#23152d"
+});
+
+function normalizeTheme(theme) {
+    return Object.prototype.hasOwnProperty.call(THEME_COLORS, theme) ? theme : "midnight";
+}
+
+function applyTheme(theme) {
+    const normalized = normalizeTheme(theme);
+    document.documentElement.setAttribute("data-theme", normalized);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", THEME_COLORS[normalized]);
+    return normalized;
+}
+
+const DEFAULT_STATE = Object.freeze({
+    staff: [],
+    shifts: [],
+    locations: [],
+    appointments: [],
+    stagedFiles: [],
+    archives: [],
+    customTransportTypes: [],
+    settings: {
+        travelOut: 30,
+        appointmentDuration: 60,
+        travelBack: 30,
+        safetyBuffer: 30,
+        primaryTransporterId: "",
+        theme: "midnight"
+    },
+    email: {
+        subject: "Weekly Transport Schedule",
+        body: ""
+    }
+});
+
+// ============================================================================
+// [JS-02] DATA MODEL + PERSISTENCE
+// ============================================================================
+function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+}
+
+function newId(prefix) {
+    if (crypto && crypto.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
+    return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(BUILD.storageKey);
+        if (!raw) return clone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        return {
+            ...clone(DEFAULT_STATE),
+            ...parsed,
+            settings: { ...clone(DEFAULT_STATE.settings), ...(parsed.settings || {}) },
+            email: { ...clone(DEFAULT_STATE.email), ...(parsed.email || {}) }
+        };
+    } catch (error) {
+        console.error("TransportView load failed", error);
+        return clone(DEFAULT_STATE);
+    }
+}
+
+let state = loadState();
+state.settings.theme = normalizeTheme(state.settings.theme);
+applyTheme(state.settings.theme);
+let activeWeekStart = startOfWeek(new Date());
+
+function saveState() {
+    localStorage.setItem(BUILD.storageKey, JSON.stringify(state));
+    if (window.p8WorkTouchMeta) window.p8WorkTouchMeta();
+}
+
+function toast(message) {
+    const node = document.getElementById("toast");
+    node.textContent = "";
+    requestAnimationFrame(() => { node.textContent = message; });
+}
+
+// ============================================================================
+// [JS-03] DATE/TIME + SCHEDULING HELPERS
+// ============================================================================
+function localDateString(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+function startOfWeek(date) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const day = d.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return d;
+}
+
+function addDays(date, count) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + count);
+    return d;
+}
+
+function weekDates() {
+    return Array.from({ length: 7 }, (_, i) => addDays(activeWeekStart, i));
+}
+
+function inActiveWeek(dateString) {
+    const start = localDateString(activeWeekStart);
+    const end = localDateString(addDays(activeWeekStart, 6));
+    return dateString >= start && dateString <= end;
+}
+
+function fmtDate(dateString, options = {}) {
+    if (!dateString) return "";
+    const [y, m, d] = dateString.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, options);
+}
+
+function fmtTime(time) {
+    if (!time) return "Time needed";
+    if (time === "N/A") return "N/A";
+    const [h, m] = time.split(":").map(Number);
+    const date = new Date(2000, 0, 1, h, m);
+    return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
+function minutesFromTime(time) {
+    if (!time || time === "N/A") return null;
+    const [h, m] = time.split(":").map(Number);
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+    return h * 60 + m;
+}
+
+function normalizeShiftBounds(shift) {
+    const start = minutesFromTime(shift.start);
+    let end = minutesFromTime(shift.end);
+    if (start === null || end === null) return null;
+    if (end <= start) end += 1440;
+    return { start, end };
+}
+
+function locationByName(name) {
+    const key = String(name || "").trim().toLowerCase();
+    return state.locations.find(item => !item.archived && item.name.trim().toLowerCase() === key) || null;
+}
+
+function transportNumbers(appt) {
+    const loc = locationByName(appt.location);
+    return {
+        travelOut: numberOr(appt.travelOut, loc?.travelTime, state.settings.travelOut),
+        duration: numberOr(appt.duration, loc?.duration, state.settings.appointmentDuration),
+        travelBack: numberOr(appt.travelBack, loc?.returnTravel, loc?.travelTime, state.settings.travelBack),
+        safety: numberOr(appt.safetyBuffer, state.settings.safetyBuffer)
+    };
+}
+
+function numberOr(...values) {
+    for (const value of values) {
+        if (value !== "" && value !== null && value !== undefined && Number.isFinite(Number(value))) {
+            return Number(value);
+        }
+    }
+    return 0;
+}
+
+function appointmentLegs(appt) {
+    if (!appt.time || appt.time === "N/A" || appt.status === "Cancelled") return [];
+    const base = minutesFromTime(appt.time);
+    if (base === null) return [];
+    const { travelOut, duration, travelBack, safety } = transportNumbers(appt);
+    const type = appt.transportType || "N/A";
+    const pickup = minutesFromTime(appt.pickupTime);
+    const expectedPickup = pickup !== null ? pickup : base + duration;
+
+    if (type === "Wait With Client") {
+        return [{ start: base - travelOut, end: base + duration + travelBack + safety, label: "Wait with client" }];
+    }
+    if (type === "Drop Off Only") {
+        return [{ start: base - travelOut, end: base + safety, label: "Drop off" }];
+    }
+    if (type === "Pick Up Only") {
+        return [{ start: expectedPickup, end: expectedPickup + travelBack + safety, label: "Pick up" }];
+    }
+    if (type === "Drop Off + Pick Up") {
+        return [
+            { start: base - travelOut, end: base + safety, label: "Drop off" },
+            { start: expectedPickup, end: expectedPickup + travelBack + safety, label: "Pick up" }
+        ];
+    }
+
+    // Blank or N/A uses a conservative full-window estimate.
+    return [{ start: base - travelOut, end: base + duration + travelBack + safety, label: "Conservative estimate" }];
+}
+
+function overlap(a, b) {
+    return a.start < b.end && b.start < a.end;
+}
+
+function staffShiftForDate(staffId, date) {
+    return state.shifts.find(shift => shift.staffId === staffId && shift.date === date && !shift.calloff) || null;
+}
+
+function staffName(id) {
+    if (id === "N/A") return "N/A";
+    return state.staff.find(item => item.id === id)?.name || "";
+}
+
+function transporterConflicts(staffId, appt) {
+    const candidateLegs = appointmentLegs(appt);
+    if (!candidateLegs.length) return [];
+    return state.appointments
+        .filter(other => other.id !== appt.id && other.date === appt.date && other.transporterId === staffId && other.status !== "Cancelled")
+        .flatMap(other => appointmentLegs(other).flatMap(otherLeg => candidateLegs.filter(candidate => overlap(candidate, otherLeg)).map(candidate => ({ other, candidate, otherLeg }))));
+}
+
+function eligibility(staffId, appt) {
+    const shift = staffShiftForDate(staffId, appt.date);
+    if (!shift) return { ok: false, reason: "Not scheduled or marked unavailable" };
+    const bounds = normalizeShiftBounds(shift);
+    const legs = appointmentLegs(appt);
+    if (!bounds || !legs.length) return { ok: false, reason: "Appointment time or shift time is incomplete" };
+
+    const normalizedLegs = legs.map(leg => {
+        let start = leg.start;
+        let end = leg.end;
+        if (start < bounds.start - 720) { start += 1440; end += 1440; }
+        return { ...leg, start, end };
+    });
+
+    const outside = normalizedLegs.find(leg => leg.start < bounds.start || leg.end > bounds.end);
+    if (outside) return { ok: false, reason: `Shift does not safely cover ${outside.label.toLowerCase()} window` };
+
+    const conflicts = transporterConflicts(staffId, appt);
+    if (conflicts.length) return { ok: false, reason: `Conflicts with ${conflicts[0].other.client || "another appointment"}` };
+
+    return {
+        ok: true,
+        reason: "Shift and transport legs are covered",
+        remaining: bounds.end - Math.max(...normalizedLegs.map(leg => leg.end))
+    };
+}
+
+// ============================================================================
+// [JS-04] ASSIGNMENT ENGINE
+// ============================================================================
+function autoAssignAppointments() {
+    const candidates = state.appointments
+        .filter(appt => inActiveWeek(appt.date) && appt.status !== "Cancelled" && !appt.locked && !appt.transporterId && appt.time)
+        .sort((a, b) => a.date.localeCompare(b.date) || String(a.time).localeCompare(String(b.time)));
+
+    let assigned = 0;
+    for (const appt of candidates) {
+        const eligible = state.staff
+            .filter(person => !person.archived)
+            .map(person => ({ person, result: eligibility(person.id, appt) }))
+            .filter(item => item.result.ok);
+
+        if (!eligible.length) continue;
+
+        eligible.sort((a, b) => {
+            const primary = state.settings.primaryTransporterId;
+            if (a.person.id === primary && b.person.id !== primary) return -1;
+            if (b.person.id === primary && a.person.id !== primary) return 1;
+
+            const aSameDay = state.appointments.filter(x => x.date === appt.date && x.transporterId === a.person.id && x.status !== "Cancelled").length;
+            const bSameDay = state.appointments.filter(x => x.date === appt.date && x.transporterId === b.person.id && x.status !== "Cancelled").length;
+            if (aSameDay !== bSameDay) return bSameDay - aSameDay;
+
+            return b.result.remaining - a.result.remaining;
+        });
+
+        appt.transporterId = eligible[0].person.id;
+        appt.assignmentSource = "auto";
+        assigned += 1;
+    }
+
+    saveState();
+    renderAll();
+    toast(`${assigned} appointment${assigned === 1 ? "" : "s"} auto assigned.`);
+}
+
+function assignmentExplanation(appt) {
+    if (!appt.transporterId || appt.transporterId === "N/A") return "No staff assignment selected.";
+    const result = eligibility(appt.transporterId, appt);
+    const shift = staffShiftForDate(appt.transporterId, appt.date);
+    const source = appt.assignmentSource === "auto" ? "Auto assigned" : "Manually assigned";
+    if (!shift) return `${source}: ${staffName(appt.transporterId)} is not scheduled for this date.`;
+    return `${source}: ${staffName(appt.transporterId)} • shift ${fmtTime(shift.start)}–${fmtTime(shift.end)} • ${result.reason}.`;
+}
+
+// ============================================================================
+// [JS-05] RENDERING
+// ============================================================================
+function renderAll() {
+    renderWeek();
+    renderAppointmentsTable();
+    renderStaff();
+    renderShifts();
+    renderLocations();
+    renderCustomTypes();
+    renderLocationDatalist();
+    renderSettings();
+    renderEmail();
+    renderArchives();
+}
+
+function renderWeek() {
+    const dates = weekDates();
+    const start = dates[0];
+    const end = dates[6];
+    document.getElementById("weekLabel").textContent = `${start.toLocaleDateString(undefined, { month: "short", day: "numeric" })} – ${end.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+
+    const appts = state.appointments.filter(appt => inActiveWeek(appt.date) && appt.status !== "Cancelled");
+    const assigned = appts.filter(appt => appt.transporterId && appt.transporterId !== "N/A").length;
+    const unresolved = appts.filter(appt => !appt.transporterId || !appt.time).length;
+    const warnings = appts.filter(appt => appt.transporterId && appt.transporterId !== "N/A" && !eligibility(appt.transporterId, appt).ok).length;
+
+    document.getElementById("metrics").innerHTML = [
+        ["Appointments", appts.length],
+        ["Assigned", assigned],
+        ["Needs attention", unresolved],
+        ["Safety warnings", warnings]
+    ].map(([label, value]) => `<div class="card metric"><small>${escapeHtml(label)}</small><strong>${value}</strong></div>`).join("");
+
+    document.getElementById("weekGrid").innerHTML = dates.map(date => {
+        const dateKey = localDateString(date);
+        const items = appts
+            .filter(appt => appt.date === dateKey)
+            .sort((a, b) => String(a.time || "99:99").localeCompare(String(b.time || "99:99")));
+
+        return `<article class="card day-card${items.length ? "" : " is-empty"}">
+            <header>
+                <strong>${date.toLocaleDateString(undefined, { weekday: "long" })}</strong>
+                <small>${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</small>
+            </header>
+            <div class="appt-list">
+                ${items.length ? items.map(renderAppointmentCard).join("") : '<div class="empty-state">No appointments</div>'}
+                <button class="btn ghost no-print" type="button" data-add-on-date="${dateKey}">+ Add</button>
+            </div>
+        </article>`;
+    }).join("");
+}
+
+function renderAppointmentCard(appt) {
+    let badge = '<span class="pill warn">Unassigned</span>';
+    if (appt.transporterId === "N/A") badge = '<span class="pill info">N/A</span>';
+    else if (appt.transporterId) {
+        const safe = eligibility(appt.transporterId, appt).ok;
+        badge = `<span class="pill ${safe ? "good" : "bad"}">${safe ? "Assigned" : "Warning"}</span>`;
+    }
+    if (appt.locked) badge += ' <span class="pill info">Locked</span>';
+
+    return `<div class="appt">
+        <div class="appt-top">
+            <div>
+                <div class="appt-time">${escapeHtml(fmtTime(appt.time))}</div>
+                <div class="appt-client">${escapeHtml(appt.client || "Client not entered")}</div>
+            </div>
+            <div>${badge}</div>
+        </div>
+        <div class="appt-meta">
+            ${escapeHtml(appt.location || "Location not entered")}<br>
+            ${escapeHtml(appt.transportType || "Transport type blank")} • ${escapeHtml(staffName(appt.transporterId) || "No transporter")}
+        </div>
+        <div class="appt-actions no-print">
+            <button class="btn" type="button" data-edit-appt="${appt.id}">Edit</button>
+            ${appt.transporterId ? `<button class="btn" type="button" data-why-appt="${appt.id}">Why?</button>` : ""}
+        </div>
+    </div>`;
+}
+
+function renderAppointmentsTable() {
+    const body = document.getElementById("appointmentsTableBody");
+    const list = [...state.appointments].sort((a, b) => a.date.localeCompare(b.date) || String(a.time).localeCompare(String(b.time)));
+    body.innerHTML = list.length ? list.map(appt => `<tr>
+        <td>${escapeHtml(fmtDate(appt.date, { month: "short", day: "numeric", year: "numeric" }))}</td>
+        <td>${escapeHtml(fmtTime(appt.time))}</td>
+        <td>${escapeHtml(appt.client || "")}</td>
+        <td>${escapeHtml(appt.location || "")}</td>
+        <td>${escapeHtml(appt.transportType || "")}</td>
+        <td>${escapeHtml(staffName(appt.transporterId) || "")}</td>
+        <td>${escapeHtml(appt.status || "")}</td>
+        <td><button class="btn" type="button" data-edit-appt="${appt.id}">Edit</button></td>
+    </tr>`).join("") : '<tr><td colspan="8" class="empty-state">No appointments yet.</td></tr>';
+}
+
+function renderStaff() {
+    const root = document.getElementById("staffList");
+    const active = state.staff.filter(person => !person.archived);
+    const archived = state.staff.filter(person => person.archived);
+    root.innerHTML = active.length || archived.length ? [
+        ...active.map(person => staffRow(person)),
+        ...archived.map(person => staffRow(person, true))
+    ].join("") : '<div class="empty-state">No staff added yet.</div>';
+}
+
+function staffRow(person, archived = false) {
+    return `<div class="upload-item">
+        <div><strong>${escapeHtml(person.name)}</strong>${archived ? ' <span class="pill info">Archived</span>' : ''}<div class="help">${escapeHtml((person.aliases || []).join(", "))}</div></div>
+        <button class="btn" type="button" data-edit-staff="${person.id}">Edit</button>
+    </div>`;
+}
+
+function renderShifts() {
+    const root = document.getElementById("shiftList");
+    const list = state.shifts.filter(shift => inActiveWeek(shift.date)).sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
+    root.innerHTML = list.length ? list.map(shift => `<div class="upload-item">
+        <div>
+            <strong>${escapeHtml(staffName(shift.staffId) || "Unknown staff")}</strong>
+            <div class="help">${escapeHtml(fmtDate(shift.date, { weekday: "short", month: "short", day: "numeric" }))} • ${escapeHtml(fmtTime(shift.start))}–${escapeHtml(fmtTime(shift.end))}${shift.calloff ? " • Call-off" : ""}</div>
+        </div>
+        <button class="btn" type="button" data-edit-shift="${shift.id}">Edit</button>
+    </div>`).join("") : '<div class="empty-state">No shifts entered for this week.</div>';
+}
+
+function renderLocations() {
+    const root = document.getElementById("locationList");
+    root.innerHTML = state.locations.length ? state.locations.map(loc => `<div class="upload-item">
+        <div>
+            <strong>${escapeHtml(loc.name)}</strong>
+            <div class="help">${escapeHtml([loc.address, loc.travelTime ? `${loc.travelTime} min out` : "", loc.duration ? `${loc.duration} min typical` : ""].filter(Boolean).join(" • "))}</div>
+        </div>
+        <button class="btn" type="button" data-edit-location="${loc.id}">Edit</button>
+    </div>`).join("") : '<div class="empty-state">No saved locations yet.</div>';
+}
+
+function renderCustomTypes() {
+    const root = document.getElementById("customTypeList");
+    root.innerHTML = state.customTransportTypes.length ? state.customTransportTypes.map(type => `<div class="upload-item"><span>${escapeHtml(type)}</span><button class="btn danger" type="button" data-delete-custom-type="${encodeURIComponent(type)}">Delete</button></div>`).join("") : '<div class="help">No custom transport types yet.</div>';
+}
+
+function renderLocationDatalist() {
+    document.getElementById("locationDatalist").innerHTML = state.locations.filter(x => !x.archived).map(loc => `<option value="${escapeAttr(loc.name)}"></option>`).join("");
+}
+
+function renderSettings() {
+    document.getElementById("settingTravelOut").value = state.settings.travelOut;
+    document.getElementById("settingDuration").value = state.settings.appointmentDuration;
+    document.getElementById("settingTravelBack").value = state.settings.travelBack;
+    document.getElementById("settingSafety").value = state.settings.safetyBuffer;
+    document.getElementById("settingPrimary").innerHTML = staffSelectOptions(state.settings.primaryTransporterId, false);
+    document.getElementById("settingTheme").value = normalizeTheme(state.settings.theme);
+}
+
+function renderEmail() {
+    document.getElementById("emailSubject").value = state.email.subject || "Weekly Transport Schedule";
+    document.getElementById("emailBody").value = state.email.body || "";
+}
+
+function renderArchives() {
+    const root = document.getElementById("archiveList");
+    root.innerHTML = state.archives.length ? state.archives.map(item => `<div class="upload-item">
+        <div><strong>${escapeHtml(item.label)}</strong><div class="help">${item.appointments.length} appointment(s)</div></div>
+        <button class="btn" type="button" data-restore-archive="${item.id}">Restore</button>
+    </div>`).join("") : '<div class="help">No archived weeks yet.</div>';
+}
+
+function staffSelectOptions(selected = "", includeNA = true) {
+    const rows = ['<option value=""></option>'];
+    if (includeNA) rows.push('<option value="N/A">N/A</option>');
+    state.staff.filter(person => !person.archived).forEach(person => {
+        rows.push(`<option value="${escapeAttr(person.id)}" ${person.id === selected ? "selected" : ""}>${escapeHtml(person.name)}</option>`);
+    });
+    return rows.join("");
+}
+
+function transportTypeOptions(selected = "") {
+    const values = ["", "N/A", ...DEFAULT_TRANSPORT_TYPES, ...state.customTransportTypes.filter(type => !DEFAULT_TRANSPORT_TYPES.includes(type))];
+    return values.map(value => `<option value="${escapeAttr(value)}" ${value === selected ? "selected" : ""}>${escapeHtml(value)}</option>`).join("");
+}
+
+function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+}
+
+function escapeAttr(value) {
+    return escapeHtml(value);
+}
+
+// ============================================================================
+// [JS-06] CRUD + INTERACTION HANDLERS
+// ============================================================================
+function openAppointment(id = "", date = "") {
+    const appt = state.appointments.find(item => item.id === id) || null;
+    document.getElementById("appointmentDialogTitle").textContent = appt ? "Edit Appointment" : "New Appointment";
+    document.getElementById("apptId").value = appt?.id || "";
+    document.getElementById("apptDate").value = appt?.date || date || localDateString(new Date());
+    document.getElementById("apptTime").value = appt?.time || "";
+    document.getElementById("apptClient").value = appt?.client || "";
+    document.getElementById("apptLocation").value = appt?.location || "";
+    document.getElementById("apptType").innerHTML = transportTypeOptions(appt?.transportType || "");
+    document.getElementById("apptStatus").value = appt?.status || "Scheduled";
+    document.getElementById("apptTransporter").innerHTML = staffSelectOptions(appt?.transporterId || "");
+    document.getElementById("apptPickupTime").value = appt?.pickupTime || "";
+    document.getElementById("apptDuration").value = appt?.duration ?? "";
+    document.getElementById("apptTravelOut").value = appt?.travelOut ?? "";
+    document.getElementById("apptTravelBack").value = appt?.travelBack ?? "";
+    document.getElementById("apptSafety").value = appt?.safetyBuffer ?? "";
+    document.getElementById("apptNotes").value = appt?.notes || "";
+    document.getElementById("apptLocked").checked = Boolean(appt?.locked);
+    document.getElementById("deleteAppointmentBtn").hidden = !appt;
+
+    const explain = document.getElementById("assignmentExplain");
+    explain.hidden = !appt?.transporterId;
+    if (appt?.transporterId) explain.textContent = assignmentExplanation(appt);
+
+    document.getElementById("appointmentDialog").showModal();
+}
+
+function saveAppointment() {
+    const id = document.getElementById("apptId").value;
+    const date = document.getElementById("apptDate").value;
+    if (!date) return alert("Date is required.");
+
+    const transporterId = document.getElementById("apptTransporter").value;
+    const record = {
+        id: id || newId("appt"),
+        date,
+        time: document.getElementById("apptTime").value,
+        client: document.getElementById("apptClient").value.trim(),
+        location: document.getElementById("apptLocation").value.trim(),
+        transportType: document.getElementById("apptType").value,
+        status: document.getElementById("apptStatus").value,
+        transporterId,
+        pickupTime: document.getElementById("apptPickupTime").value,
+        duration: optionalNumber("apptDuration"),
+        travelOut: optionalNumber("apptTravelOut"),
+        travelBack: optionalNumber("apptTravelBack"),
+        safetyBuffer: optionalNumber("apptSafety"),
+        notes: document.getElementById("apptNotes").value.trim(),
+        locked: document.getElementById("apptLocked").checked,
+        assignmentSource: transporterId ? "manual" : ""
+    };
+
+    const index = state.appointments.findIndex(item => item.id === record.id);
+    if (index >= 0) state.appointments[index] = record;
+    else state.appointments.push(record);
+
+    saveState();
+    document.getElementById("appointmentDialog").close();
+    renderAll();
+}
+
+function optionalNumber(id) {
+    const value = document.getElementById(id).value;
+    return value === "" ? "" : Number(value);
+}
+
+function deleteAppointment(id) {
+    if (!id || !confirm("Delete this appointment?")) return;
+    state.appointments = state.appointments.filter(item => item.id !== id);
+    saveState();
+    document.getElementById("appointmentDialog").close();
+    renderAll();
+}
+
+function openStaff(id = "") {
+    const person = state.staff.find(item => item.id === id) || null;
+    document.getElementById("staffId").value = person?.id || "";
+    document.getElementById("staffName").value = person?.name || "";
+    document.getElementById("staffAliases").value = (person?.aliases || []).join(", ");
+    document.getElementById("staffArchived").checked = Boolean(person?.archived);
+    document.getElementById("staffDialog").showModal();
+}
+
+function saveStaff() {
+    const name = document.getElementById("staffName").value.trim();
+    if (!name) return alert("Staff name is required.");
+    const id = document.getElementById("staffId").value || newId("staff");
+    const record = {
+        id,
+        name,
+        aliases: document.getElementById("staffAliases").value.split(",").map(x => x.trim()).filter(Boolean),
+        archived: document.getElementById("staffArchived").checked
+    };
+    const index = state.staff.findIndex(item => item.id === id);
+    if (index >= 0) state.staff[index] = record;
+    else state.staff.push(record);
+    saveState();
+    document.getElementById("staffDialog").close();
+    renderAll();
+}
+
+function openShift(id = "") {
+    const shift = state.shifts.find(item => item.id === id) || null;
+    document.getElementById("shiftId").value = shift?.id || "";
+    document.getElementById("shiftStaff").innerHTML = staffSelectOptions(shift?.staffId || "", false);
+    document.getElementById("shiftDate").value = shift?.date || localDateString(activeWeekStart);
+    document.getElementById("shiftStart").value = shift?.start || "07:00";
+    document.getElementById("shiftEnd").value = shift?.end || "15:00";
+    document.getElementById("shiftCalloff").checked = Boolean(shift?.calloff);
+    document.getElementById("shiftNotes").value = shift?.notes || "";
+    document.getElementById("deleteShiftBtn").hidden = !shift;
+    document.getElementById("shiftDialog").showModal();
+}
+
+function saveShift() {
+    const staffId = document.getElementById("shiftStaff").value;
+    const date = document.getElementById("shiftDate").value;
+    const start = document.getElementById("shiftStart").value;
+    const end = document.getElementById("shiftEnd").value;
+    if (!staffId || !date || !start || !end) return alert("Staff, date, start, and end are required.");
+    const id = document.getElementById("shiftId").value || newId("shift");
+    const record = { id, staffId, date, start, end, calloff: document.getElementById("shiftCalloff").checked, notes: document.getElementById("shiftNotes").value.trim() };
+    const index = state.shifts.findIndex(item => item.id === id);
+    if (index >= 0) state.shifts[index] = record;
+    else state.shifts.push(record);
+    saveState();
+    document.getElementById("shiftDialog").close();
+    renderAll();
+}
+
+function deleteShift(id) {
+    if (!id || !confirm("Delete this shift?")) return;
+    state.shifts = state.shifts.filter(item => item.id !== id);
+    saveState();
+    document.getElementById("shiftDialog").close();
+    renderAll();
+}
+
+function openLocation(id = "") {
+    const loc = state.locations.find(item => item.id === id) || null;
+    document.getElementById("locationId").value = loc?.id || "";
+    document.getElementById("locationName").value = loc?.name || "";
+    document.getElementById("locationAddress").value = loc?.address || "";
+    document.getElementById("locationTravel").value = loc?.travelTime ?? "";
+    document.getElementById("locationDuration").value = loc?.duration ?? "";
+    document.getElementById("locationReturn").value = loc?.returnTravel ?? "";
+    document.getElementById("locationConsult").checked = Boolean(loc?.consultationForm);
+    document.getElementById("locationNotes").value = loc?.notes || "";
+    document.getElementById("deleteLocationBtn").hidden = !loc;
+    document.getElementById("locationDialog").showModal();
+}
+
+function saveLocation() {
+    const name = document.getElementById("locationName").value.trim();
+    if (!name) return alert("Location name is required.");
+    const id = document.getElementById("locationId").value || newId("loc");
+    const record = {
+        id,
+        name,
+        address: document.getElementById("locationAddress").value.trim(),
+        travelTime: optionalNumber("locationTravel"),
+        duration: optionalNumber("locationDuration"),
+        returnTravel: optionalNumber("locationReturn"),
+        consultationForm: document.getElementById("locationConsult").checked,
+        notes: document.getElementById("locationNotes").value.trim()
+    };
+    const index = state.locations.findIndex(item => item.id === id);
+    if (index >= 0) state.locations[index] = record;
+    else state.locations.push(record);
+    saveState();
+    document.getElementById("locationDialog").close();
+    renderAll();
+}
+
+function deleteLocation(id) {
+    if (!id || !confirm("Delete this saved location? Existing appointments will keep their typed location text.")) return;
+    state.locations = state.locations.filter(item => item.id !== id);
+    saveState();
+    document.getElementById("locationDialog").close();
+    renderAll();
+}
+
+// ============================================================================
+// [JS-07] IMPORT / EXPORT + PRINTING / EMAIL
+// ============================================================================
+function downloadText(filename, content, type = "text/plain") {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportBackup() {
+    const payload = { app: BUILD.name, version: BUILD.version, schemaVersion: BUILD.schemaVersion, exportedAt: new Date().toISOString(), state };
+    downloadText(`TransportView-backup-${localDateString(new Date())}.json`, JSON.stringify(payload, null, 2), "application/json");
+}
+
+function exportAppointmentsCsv() {
+    const rows = [["date", "time", "client", "location", "transportType", "transporter", "status", "pickupTime", "notes"]];
+    state.appointments.forEach(appt => rows.push([
+        appt.date, appt.time, appt.client, appt.location, appt.transportType, staffName(appt.transporterId), appt.status, appt.pickupTime, appt.notes
+    ]));
+    const csv = rows.map(row => row.map(csvCell).join(",")).join("\n");
+    downloadText(`TransportView-appointments-${localDateString(new Date())}.csv`, csv, "text/csv");
+}
+
+function csvCell(value) {
+    return `"${String(value ?? "").replace(/"/g, '""')}"`;
+}
+
+function parseCsv(text) {
+    const lines = text.split(/\r?\n/).filter(line => line.trim());
+    if (lines.length < 2) return [];
+    const header = splitCsvLine(lines[0]).map(x => x.trim().toLowerCase());
+    return lines.slice(1).map(line => {
+        const values = splitCsvLine(line);
+        const obj = {};
+        header.forEach((key, i) => { obj[key] = values[i] ?? ""; });
+        return obj;
+    });
+}
+
+function splitCsvLine(line) {
+    const result = [];
+    let current = "";
+    let quoted = false;
+    for (let i = 0; i < line.length; i += 1) {
+        const char = line[i];
+        if (char === '"') {
+            if (quoted && line[i + 1] === '"') { current += '"'; i += 1; }
+            else quoted = !quoted;
+        } else if (char === "," && !quoted) {
+            result.push(current);
+            current = "";
+        } else current += char;
+    }
+    result.push(current);
+    return result;
+}
+
+async function handleFiles(files) {
+    for (const file of files) {
+        const ext = file.name.split(".").pop().toLowerCase();
+        if (["json", "csv", "txt"].includes(ext)) {
+            const text = await file.text();
+            if (ext === "json") {
+                try {
+                    const parsed = JSON.parse(text);
+                    if (parsed.state && parsed.app === BUILD.name) {
+                        if (confirm(`Import full TransportView backup from ${file.name}? Current data will be replaced.`)) {
+                            state = {
+                                ...clone(DEFAULT_STATE),
+                                ...parsed.state,
+                                settings: { ...clone(DEFAULT_STATE.settings), ...((parsed.state && parsed.state.settings) || {}) },
+                                email: { ...clone(DEFAULT_STATE.email), ...((parsed.state && parsed.state.email) || {}) }
+                            };
+                            state.settings.theme = applyTheme(state.settings.theme);
+                            saveState();
+                            renderAll();
+                        }
+                    } else {
+                        state.stagedFiles.push({ id: newId("file"), name: file.name, type: file.type || ext, status: "JSON staged for review" });
+                    }
+                } catch {
+                    state.stagedFiles.push({ id: newId("file"), name: file.name, type: file.type || ext, status: "Invalid JSON, staged for review" });
+                }
+            } else if (ext === "csv") {
+                const rows = parseCsv(text);
+                const hasAppointmentColumns = rows[0] && ("date" in rows[0]) && ("client" in rows[0]);
+                if (hasAppointmentColumns) {
+                    const imported = rows.map(row => ({
+                        id: newId("appt"),
+                        date: row.date || "",
+                        time: row.time || "",
+                        client: row.client || "",
+                        location: row.location || "",
+                        transportType: row.transporttype || row.transport_type || "",
+                        transporterId: "",
+                        status: row.status || "Scheduled",
+                        pickupTime: row.pickuptime || row.pickup_time || "",
+                        notes: row.notes || "",
+                        locked: false,
+                        assignmentSource: ""
+                    })).filter(row => row.date);
+                    if (confirm(`Import ${imported.length} appointment(s) from ${file.name}?`)) state.appointments.push(...imported);
+                } else {
+                    state.stagedFiles.push({ id: newId("file"), name: file.name, type: file.type || ext, status: `${rows.length} CSV row(s) staged for review` });
+                }
+            } else {
+                state.stagedFiles.push({ id: newId("file"), name: file.name, type: file.type || ext, status: "Text file staged for manual review", preview: text.slice(0, 500) });
+            }
+        } else {
+            state.stagedFiles.push({ id: newId("file"), name: file.name, type: file.type || ext, status: "Staged for manual review; automatic OCR/document parsing not enabled in this build" });
+        }
+    }
+    state.settings.theme = applyTheme(state.settings.theme);
+    saveState();
+    renderUploads();
+    renderAll();
+}
+
+function renderUploads() {
+    const root = document.getElementById("uploadList");
+    root.innerHTML = state.stagedFiles.length ? state.stagedFiles.map(file => `<div class="upload-item">
+        <div><strong>${escapeHtml(file.name)}</strong><div class="help">${escapeHtml(file.status)}</div></div>
+        <button class="btn danger" type="button" data-remove-upload="${file.id}">Remove</button>
+    </div>`).join("") : '<div class="help">No files staged.</div>';
+}
+
+function generateEmail() {
+    const dates = weekDates();
+    const label = `${dates[0].toLocaleDateString(undefined, { month: "short", day: "numeric" })} – ${dates[6].toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+    const subject = `Transport Schedule • ${label}`;
+    const body = ["Good morning,", "", "Here is this week's transport schedule:", ""];
+
+    dates.forEach(date => {
+        const dateKey = localDateString(date);
+        body.push(`${date.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}`);
+        const items = state.appointments.filter(appt => appt.date === dateKey && appt.status !== "Cancelled").sort((a, b) => String(a.time).localeCompare(String(b.time)));
+        if (!items.length) body.push("No scheduled appointments.");
+        else items.forEach(appt => body.push(`${fmtTime(appt.time)} • ${appt.client || "Client"} • ${appt.location || "Location TBD"} • ${staffName(appt.transporterId) || "Transporter TBD"}`));
+        body.push("");
+    });
+
+    const consultLocations = state.appointments.filter(appt => inActiveWeek(appt.date)).some(appt => locationByName(appt.location)?.consultationForm);
+    if (consultLocations) body.push("Reminder: Consultation forms must accompany clients to applicable doctor appointments.", "");
+
+    body.push("Thank you.");
+    state.email.subject = subject;
+    state.email.body = body.join("\n");
+    saveState();
+    renderEmail();
+}
+
+function readinessCheck() {
+    const issues = [];
+    const appts = state.appointments.filter(appt => inActiveWeek(appt.date) && appt.status !== "Cancelled");
+    appts.forEach(appt => {
+        const label = `${fmtDate(appt.date, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(appt.time)} ${appt.client || "Client"}`;
+        if (!appt.time) issues.push({ level: "warn", text: `${label}: appointment time is blank.` });
+        if (!appt.transporterId) issues.push({ level: "warn", text: `${label}: transporter is blank.` });
+        if (appt.transporterId && appt.transporterId !== "N/A") {
+            const result = eligibility(appt.transporterId, appt);
+            if (!result.ok) issues.push({ level: "bad", text: `${label}: ${staffName(appt.transporterId)} — ${result.reason}.` });
+        }
+    });
+
+    if (state.stagedFiles.length) issues.push({ level: "warn", text: `${state.stagedFiles.length} imported/staged file(s) still need review.` });
+
+    const panel = document.getElementById("readinessPanel");
+    panel.hidden = false;
+    panel.innerHTML = `<div class="card-body">
+        <div class="section-head"><div><h3>Weekly Readiness Check</h3><p>${issues.length ? `${issues.length} item(s) need attention.` : "Schedule looks ready based on current data."}</p></div><button class="btn no-print" id="closeReadinessBtn" type="button">Close</button></div>
+        <div class="readiness-list">${issues.length ? issues.map(issue => `<div class="readiness-item"><span class="pill ${issue.level}">${issue.level === "bad" ? "Warning" : "Review"}</span><span>${escapeHtml(issue.text)}</span></div>`).join("") : '<div class="readiness-item"><span class="pill good">Ready</span><span>No unresolved schedule checks found.</span></div>'}</div>
+    </div>`;
+    document.getElementById("closeReadinessBtn").addEventListener("click", () => { panel.hidden = true; });
+}
+
+function archiveWeek() {
+    const start = localDateString(activeWeekStart);
+    const end = localDateString(addDays(activeWeekStart, 6));
+    const appointments = state.appointments.filter(appt => appt.date >= start && appt.date <= end);
+    const shifts = state.shifts.filter(shift => shift.date >= start && shift.date <= end);
+    state.archives.unshift({
+        id: newId("archive"),
+        weekStart: start,
+        label: `${fmtDate(start, { month: "short", day: "numeric" })} – ${fmtDate(end, { month: "short", day: "numeric", year: "numeric" })}`,
+        appointments: clone(appointments),
+        shifts: clone(shifts),
+        archivedAt: new Date().toISOString()
+    });
+    saveState();
+    renderArchives();
+    toast("Current week archived.");
+}
+
+function restoreArchive(id) {
+    const archive = state.archives.find(item => item.id === id);
+    if (!archive) return;
+    if (!confirm(`Restore archived week ${archive.label}? Existing records for that week will be replaced.`)) return;
+    const start = archive.weekStart;
+    const end = localDateString(addDays(new Date(`${start}T00:00:00`), 6));
+    state.appointments = state.appointments.filter(appt => appt.date < start || appt.date > end).concat(clone(archive.appointments));
+    state.shifts = state.shifts.filter(shift => shift.date < start || shift.date > end).concat(clone(archive.shifts));
+    activeWeekStart = new Date(`${start}T00:00:00`);
+    saveState();
+    renderAll();
+}
+
+// ============================================================================
+// [JS-08] CLEANUP + STARTUP
+// ============================================================================
+function cleanup(level) {
+    const descriptions = {
+        week: "Delete appointments and shifts for the currently selected week only?",
+        history: "Delete all archived weeks?",
+        personal: "Delete clients/appointments, staff, shifts, archives, and staged import data while keeping locations, custom options, and settings?",
+        custom: "Delete saved locations, custom transport types, and reset editable preferences?",
+        factory: "FACTORY RESET: delete all TransportView data and return to first-run defaults?"
+    };
+    if (!confirm(descriptions[level])) return;
+
+    const start = localDateString(activeWeekStart);
+    const end = localDateString(addDays(activeWeekStart, 6));
+    if (level === "week") {
+        state.appointments = state.appointments.filter(appt => appt.date < start || appt.date > end);
+        state.shifts = state.shifts.filter(shift => shift.date < start || shift.date > end);
+    } else if (level === "history") {
+        state.archives = [];
+    } else if (level === "personal") {
+        state.appointments = [];
+        state.staff = [];
+        state.shifts = [];
+        state.archives = [];
+        state.stagedFiles = [];
+        state.settings.primaryTransporterId = "";
+    } else if (level === "custom") {
+        state.locations = [];
+        state.customTransportTypes = [];
+        state.settings = clone(DEFAULT_STATE.settings);
+        state.email = clone(DEFAULT_STATE.email);
+    } else if (level === "factory") {
+        state = clone(DEFAULT_STATE);
+    }
+
+    state.settings.theme = applyTheme(state.settings.theme);
+    saveState();
+    renderUploads();
+    renderAll();
+}
+
+function saveSettings() {
+    state.settings.travelOut = numberOr(document.getElementById("settingTravelOut").value, 0);
+    state.settings.appointmentDuration = numberOr(document.getElementById("settingDuration").value, 0);
+    state.settings.travelBack = numberOr(document.getElementById("settingTravelBack").value, 0);
+    state.settings.safetyBuffer = numberOr(document.getElementById("settingSafety").value, 0);
+    state.settings.primaryTransporterId = document.getElementById("settingPrimary").value;
+    state.settings.theme = applyTheme(document.getElementById("settingTheme").value);
+    saveState();
+    renderAll();
+    toast("Settings saved.");
+}
+
+function bindEvents() {
+    document.querySelectorAll(".nav-btn").forEach(button => button.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(node => node.setAttribute("aria-selected", "false"));
+        button.setAttribute("aria-selected", "true");
+        document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+        document.getElementById(`view-${button.dataset.view}`).classList.add("active");
+    }));
+
+    document.getElementById("quickAddBtn").addEventListener("click", () => openAppointment());
+    document.getElementById("addAppointmentBtn").addEventListener("click", () => openAppointment());
+    document.getElementById("saveAppointmentBtn").addEventListener("click", saveAppointment);
+    document.getElementById("deleteAppointmentBtn").addEventListener("click", () => deleteAppointment(document.getElementById("apptId").value));
+    document.getElementById("addStaffBtn").addEventListener("click", () => openStaff());
+    document.getElementById("saveStaffBtn").addEventListener("click", saveStaff);
+    document.getElementById("addShiftBtn").addEventListener("click", () => openShift());
+    document.getElementById("saveShiftBtn").addEventListener("click", saveShift);
+    document.getElementById("deleteShiftBtn").addEventListener("click", () => deleteShift(document.getElementById("shiftId").value));
+    document.getElementById("addLocationBtn").addEventListener("click", () => openLocation());
+    document.getElementById("saveLocationBtn").addEventListener("click", saveLocation);
+    document.getElementById("deleteLocationBtn").addEventListener("click", () => deleteLocation(document.getElementById("locationId").value));
+
+    document.getElementById("prevWeekBtn").addEventListener("click", () => { activeWeekStart = addDays(activeWeekStart, -7); renderAll(); });
+    document.getElementById("nextWeekBtn").addEventListener("click", () => { activeWeekStart = addDays(activeWeekStart, 7); renderAll(); });
+    document.getElementById("todayWeekBtn").addEventListener("click", () => { activeWeekStart = startOfWeek(new Date()); renderAll(); });
+    document.getElementById("autoAssignBtn").addEventListener("click", autoAssignAppointments);
+    document.getElementById("readinessBtn").addEventListener("click", readinessCheck);
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+    document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
+
+    document.getElementById("addCustomTypeBtn").addEventListener("click", () => {
+        const input = document.getElementById("customTypeInput");
+        const value = input.value.trim();
+        if (!value) return;
+        if (!state.customTransportTypes.includes(value) && !DEFAULT_TRANSPORT_TYPES.includes(value)) state.customTransportTypes.push(value);
+        input.value = "";
+        saveState();
+        renderCustomTypes();
+    });
+
+    document.getElementById("exportBackupBtn").addEventListener("click", exportBackup);
+    document.getElementById("exportCsvBtn").addEventListener("click", exportAppointmentsCsv);
+    document.getElementById("importBackupBtn").addEventListener("click", () => document.getElementById("backupInput").click());
+    document.getElementById("backupInput").addEventListener("change", event => handleFiles(event.target.files));
+    document.getElementById("generateEmailBtn").addEventListener("click", generateEmail);
+    document.getElementById("copyEmailBtn").addEventListener("click", async () => {
+        state.email.subject = document.getElementById("emailSubject").value;
+        state.email.body = document.getElementById("emailBody").value;
+        saveState();
+        await navigator.clipboard.writeText(`Subject: ${state.email.subject}\n\n${state.email.body}`);
+        toast("Email copied.");
+    });
+    document.getElementById("saveEmailTxtBtn").addEventListener("click", () => {
+        state.email.subject = document.getElementById("emailSubject").value;
+        state.email.body = document.getElementById("emailBody").value;
+        saveState();
+        downloadText(`TransportView-email-${localDateString(activeWeekStart)}.txt`, `Subject: ${state.email.subject}\n\n${state.email.body}`);
+    });
+    document.getElementById("archiveWeekBtn").addEventListener("click", archiveWeek);
+
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") fileInput.click(); });
+    fileInput.addEventListener("change", event => handleFiles(event.target.files));
+    ["dragenter", "dragover"].forEach(name => dropZone.addEventListener(name, event => { event.preventDefault(); dropZone.classList.add("dragover"); }));
+    ["dragleave", "drop"].forEach(name => dropZone.addEventListener(name, event => { event.preventDefault(); dropZone.classList.remove("dragover"); }));
+    dropZone.addEventListener("drop", event => handleFiles(event.dataTransfer.files));
+
+    document.addEventListener("click", event => {
+        const addDate = event.target.closest("[data-add-on-date]");
+        if (addDate) openAppointment("", addDate.dataset.addOnDate);
+
+        const appt = event.target.closest("[data-edit-appt]");
+        if (appt) openAppointment(appt.dataset.editAppt);
+
+        const why = event.target.closest("[data-why-appt]");
+        if (why) {
+            const record = state.appointments.find(item => item.id === why.dataset.whyAppt);
+            if (record) alert(assignmentExplanation(record));
+        }
+
+        const staff = event.target.closest("[data-edit-staff]");
+        if (staff) openStaff(staff.dataset.editStaff);
+
+        const shift = event.target.closest("[data-edit-shift]");
+        if (shift) openShift(shift.dataset.editShift);
+
+        const location = event.target.closest("[data-edit-location]");
+        if (location) openLocation(location.dataset.editLocation);
+
+        const deleteType = event.target.closest("[data-delete-custom-type]");
+        if (deleteType) {
+            const value = decodeURIComponent(deleteType.dataset.deleteCustomType);
+            if (confirm(`Delete custom option “${value}”? Existing appointments keep the text.`)) {
+                state.customTransportTypes = state.customTransportTypes.filter(type => type !== value);
+                saveState();
+                renderCustomTypes();
+            }
+        }
+
+        const removeUpload = event.target.closest("[data-remove-upload]");
+        if (removeUpload) {
+            state.stagedFiles = state.stagedFiles.filter(file => file.id !== removeUpload.dataset.removeUpload);
+            saveState();
+            renderUploads();
+        }
+
+        const restore = event.target.closest("[data-restore-archive]");
+        if (restore) restoreArchive(restore.dataset.restoreArchive);
+
+        const clean = event.target.closest("[data-cleanup]");
+        if (clean) cleanup(clean.dataset.cleanup);
+    });
+
+    document.getElementById("emailSubject").addEventListener("change", event => { state.email.subject = event.target.value; saveState(); });
+    document.getElementById("emailBody").addEventListener("change", event => { state.email.body = event.target.value; saveState(); });
+}
+
+function init() {
+    bindEvents();
+    renderUploads();
+    renderAll();
+
+}
+
+init();
+</script>
+</body>
+</html>
