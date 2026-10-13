@@ -1,3 +1,12 @@
+## p8Work 1.3.0 — File Library and update notification repair
+
+- Added independent File Library in p8Work shell, built on a separate IndexedDB Blob/metadata database.
+- Included folders/subfolders, drag-and-drop import, rename/move, categories/tags/search, Archive/Trash/permanent delete, previews/download.
+- Added separate verified AES-256-GCM encrypted File Library backup (.p8lib), validated restore with merge or atomic replacement. Master Backup continues to cover four tools only; File Library must be backed up separately.
+- Limited local library to 160 MiB to keep contents eligible for this release's encrypted backup format. Data is NOT encrypted at rest and workplace approval is required for protected records.
+- Synchronized release manifest/updater IDs (fix for false persistent update banner); advanced service-worker cache to v15.
+- The four existing tool HTML files and client data keys are unchanged.
+
 ## p8Work 1.2.5, Beta 4, consult-only print and PDF
 Consultation Form Manager 1.4.5 adds a safe, non-destructive medication-attachment toggle, single-page consult-only print/PDF, and explicit client-card consult-only PDF.
 

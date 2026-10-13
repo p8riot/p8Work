@@ -1,7 +1,7 @@
-const CACHE_NAME = 'p8work-shell-v14';
+const CACHE_NAME = 'p8work-shell-v17';
 const SHELL = [
   './','./index.html','./manifest.webmanifest','./release.json',
-  './hub/tool-registry.js','./hub/hub-storage.js','./hub/crypto.js','./hub/backup-adapters.js','./hub/consultation-media.js','./hub/backup-engine.js','./hub/restore-engine.js','./hub/update-manager.js','./hub/app.js',
+  './hub/tool-registry.js','./hub/hub-storage.js','./hub/crypto.js','./hub/backup-adapters.js','./hub/consultation-media.js','./hub/workplace-preservation.js','./hub/backup-engine.js','./hub/restore-engine.js','./hub/update-manager.js','./hub/app.js','./hub/file-library.js',
   './assets/icons/p8work-192.png','./assets/icons/p8work-512.png','./assets/icons/p8work-maskable-512.png',
   './assets/icons/shiftview-256.png','./assets/icons/transportview-256.png','./assets/icons/consultation-manager-256.png','./assets/icons/chore-planner-256.png',
   './assets/backgrounds/p8work-home.webp',

@@ -49,7 +49,7 @@
       <aside class="dashboard-panel">
         <div class="info-block"><span>Last opened</span><strong>${lastTool?esc(lastTool.name):'No tool opened yet'}</strong><small>${last?esc(formatDateTime(last.openedAt)):''}</small></div>
         <div class="info-block"><span>Master backup</span><strong>${backupMeta?'Backup available':'No backup yet'}</strong><small>${backupMeta?esc(formatDateTime(backupMeta.createdAt)):'Create one from Backups'}</small></div>
-        <div class="info-block"><span>System</span><strong>${tools.length} tools available</strong><small>p8Work 1.2.4 · Beta 4</small></div>
+        <div class="info-block"><span>System</span><strong>${tools.length} tools available</strong><small>p8Work 1.3.0 · Beta 4</small></div>
       </aside>`;
     } else area.innerHTML=`<div class="tool-grid">${tools.map(t=>toolCard(t,false)).join('')}</div>`;
     $$('.tool-card',area).forEach(card=>card.addEventListener('click',()=>storage.recordToolOpen(card.dataset.toolId)));
@@ -59,7 +59,7 @@
     $$('.app-section').forEach(s=>s.hidden=s.id!==`section-${id}`);
     $$('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.section===id));
     if(persist&&settings.rememberLastSection){settings.lastSection=id; storage.saveSettings(settings);}
-    if(id==='backups') renderBackupStatus(); if(id==='about')renderAbout(); if(id==='settings')renderSettings();
+    if(id==='library' && global.P8WORK_FILE_LIBRARY) global.P8WORK_FILE_LIBRARY.refresh().catch(e=>console.warn('File Library refresh failed',e)); if(id==='backups') renderBackupStatus(); if(id==='about')renderAbout(); if(id==='settings')renderSettings();
     window.scrollTo({top:0,behavior:'instant'});
   }
 
@@ -185,7 +185,7 @@
     $('#openRestore').onclick=()=>$('#restoreFile').click(); $('#restoreFile').onchange=e=>{handleRestoreFile(e.target.files[0]);e.target.value='';}; $('#unlockRestore').onclick=unlockRestore;
     $('#openResetCenter').onclick=()=>{$('#resetCenter').hidden=!$('#resetCenter').hidden;};
     $('#resetSelectedTools').onclick=()=>{const ids=$$('#resetToolChoices input:checked').map(x=>x.value);if(!ids.length){toast('Select at least one tool to reset.','info');return;}const names=ids.map(id=>reg.byId[id].name).join(', ');if(confirm(`Reset ${names}? A local safety snapshot will be created first. Other tools will not be changed.`)){try{restore.resetTools(ids);renderBackupStatus();toast('Selected tools were reset. A safety snapshot is available for undo.','success');}catch(e){toast(e.message||String(e),'error');}}};
-    $('#factoryResetAll').onclick=()=>{if(confirm('Factory reset p8Work and all four tools? A local safety snapshot will be created first. This clears current local tool data and restores factory behavior on next open.')){if(confirm('Final confirmation: factory reset the entire p8Work installation on this browser profile?')){try{restore.factoryResetAll();settings=storage.loadSettings();saveSettings();renderBackupStatus();toast('p8Work factory reset completed. A safety snapshot is available for undo.','success');}catch(e){toast(e.message||String(e),'error');}}}};
+    $('#factoryResetAll').onclick=()=>{if(confirm('Factory reset the four tools and hub preferences? The File Library is not affected. A local safety snapshot will be created first. This clears current local tool data and restores factory behavior on next open.')){if(confirm('Final confirmation: factory reset the entire p8Work installation on this browser profile?')){try{restore.factoryResetAll();settings=storage.loadSettings();saveSettings();renderBackupStatus();toast('p8Work factory reset completed. A safety snapshot is available for undo.','success');}catch(e){toast(e.message||String(e),'error');}}}};
     $('#createBackupBeforeReset').onclick=()=>{populateBackupDialog();openDialog('#createBackupDialog');};
     $('#undoProtectedChange').onclick=()=>{if(confirm('Undo the last protected restore/reset using its safety snapshot? Current affected data will be replaced.')){try{restore.undoLastRestore();renderBackupStatus();renderHome();toast('Previous data restored from the safety snapshot.','success');}catch(e){toast(e.message||String(e),'error');}}};
 
@@ -197,12 +197,12 @@
   }
 
   async function init(){
-    applyTheme(); bind(); renderClock(); setInterval(renderClock,30000); renderHome(); renderBackupStatus(); renderSettings(); renderAbout();
+    applyTheme(); bind(); if(global.P8WORK_FILE_LIBRARY) await global.P8WORK_FILE_LIBRARY.init(); renderClock(); setInterval(renderClock,30000); renderHome(); renderBackupStatus(); renderSettings(); renderAbout();
     $('#resetToolChoices').innerHTML=reg.tools.map(t=>`<label class="check-row"><input type="checkbox" value="${esc(t.id)}"><span><strong>${esc(t.name)}</strong><small>Reset only this tool's local data.</small></span></label>`).join('');
     $('#offlineBanner').hidden=navigator.onLine; $('#offlineBannerTop').hidden=navigator.onLine;
     updates.on((type)=>{if(type==='update-ready')$('#updateBanner').hidden=false;if(type==='install-available')renderSettings();if(type==='controller-changed')location.reload();});
     await updates.init(); renderSettings(); await refreshOfflineReadiness();
-    const initial=settings.rememberLastSection&&['home','backups','settings','about'].includes(settings.lastSection)?settings.lastSection:'home'; showSection(initial,false);
+    const initial=settings.rememberLastSection&&['home','library','backups','settings','about'].includes(settings.lastSection)?settings.lastSection:'home'; showSection(initial,false);
   }
   document.addEventListener('DOMContentLoaded',init);
 }(window));

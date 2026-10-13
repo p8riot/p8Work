@@ -46,7 +46,7 @@
     {
       id: "consultation-form-manager",
       name: "Consultation Form Manager",
-      version: "1.4.4",
+      version: "1.4.6",
       schemaVersion: 1,
       hubContract: 1,
       file: "tools/consultation-form-manager.html",
@@ -58,9 +58,9 @@
       sections: [
         { id: "clients", label: "Client records", paths: ["clients"], mergeMissing: { path: "clients", idKey: "id" } },
         { id: "pending", label: "Pending imports", paths: ["pending"], mergeMissing: { path: "pending", idKey: "id" } },
-        { id: "groupHomes", label: "Group homes", paths: ["groupHomes", "selectedGroupHomeId", "groupHome"], mergeMissing: { path: "groupHomes", idKey: "id" } },
+        { id: "groupHomes", label: "Group homes", paths: ["groupHomes", "selectedGroupHomeId", "groupHome", "workplaceProfile"], mergeMissing: { path: "groupHomes", idKey: "id" } },
         { id: "form", label: "Current form selection", paths: ["selectedClientId", "consultWith", "consultDate"] },
-        { id: "settings", label: "Consultation Manager settings", paths: ["theme"] }
+        { id: "settings", label: "Consultation Manager settings", paths: ["theme", "formTemplate"] }
       ]
     },
     {

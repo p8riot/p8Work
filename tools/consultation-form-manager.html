@@ -14,7 +14,7 @@
     <title>Consultation Form Manager</title>
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI5NiIgZmlsbD0iIzI0NGM3MCIvPgo8cmVjdCB4PSIxMTAiIHk9Ijc0IiB3aWR0aD0iMjkyIiBoZWlnaHQ9IjM2NCIgcng9IjI2IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHg9IjE1MCIgeT0iMTMyIiB3aWR0aD0iMjEyIiBoZWlnaHQ9IjI2IiByeD0iMTMiIGZpbGw9IiMyNDRjNzAiLz4KPHJlY3QgeD0iMTUwIiB5PSIxOTAiIHdpZHRoPSIxNTAiIGhlaWdodD0iMTgiIHJ4PSI5IiBmaWxsPSIjOGJhNmJkIi8+CjxyZWN0IHg9IjE1MCIgeT0iMjMyIiB3aWR0aD0iMjEyIiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iIzhiYTZiZCIvPgo8cmVjdCB4PSIxNTAiIHk9IjI3NCIgd2lkdGg9IjIxMiIgaGVpZ2h0PSIxOCIgcng9IjkiIGZpbGw9IiM4YmE2YmQiLz4KPHJlY3QgeD0iMTUwIiB5PSIzMTYiIHdpZHRoPSIxODAiIGhlaWdodD0iMTgiIHJ4PSI5IiBmaWxsPSIjOGJhNmJkIi8+CjxjaXJjbGUgY3g9IjM0NSIgY3k9IjM2OCIgcj0iNDIiIGZpbGw9IiMyNDRjNzAiLz4KPHBhdGggZD0iTTMyNyAzNjhoMzZNMzQ1IDM1MHYzNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" type="image/svg+xml">
     <style>
-/* Consultation Form Manager 1.4.5
+/* Consultation Form Manager 1.4.6
    Structured Mode source map
    [CSS-01] Theme tokens + global foundation
    [CSS-02] App shell + navigation
@@ -958,14 +958,21 @@ body[data-theme="dark"] .match-chip {
 }
 
 .pharmacy-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    column-gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
     align-items: baseline;
 }
 
 .pharmacy-row > span {
     min-width: 0;
+    overflow-wrap: anywhere;
+}
+/* Pharmacy name/address must remain intact when users change to a longer
+   location name. Put phone and fax on the following line, never clip a drugstore
+   address to make both columns fit. This applies to print and PDF export. */
+.pharmacy-row > span:first-child {
+    flex: 1 1 100%;
 }
 
 .purpose-section {
@@ -1558,6 +1565,18 @@ body[data-theme="dark"] .match-chip {
     #view-form.has-duplex-blank .medication-stage { order:3; }
 }
 
+
+/* Printed consultation template editor lives in Settings, never on paper. */
+.template-editor { display:grid;gap:13px;margin-top:14px; }
+.template-group { border:1px solid var(--border, #c7d4e4); border-radius:10px;padding:12px;min-width:0; }
+.template-group legend {font-weight:750;padding:0 5px;}
+.template-fields {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:10px;}
+.template-fields label { display:flex;flex-direction:column;gap:4px;font-weight:650;min-width:0; }
+.template-fields input,.template-fields textarea { width:100%; min-width:0; font:inherit; padding:9px; border-radius:7px; border:1px solid #a8b7c5; color:var(--text,#182638);background:var(--surface,#fff); }
+.template-fields textarea {min-height:90px;resize:vertical;}
+.template-fields label.template-toggle {display:flex;flex-direction:row;align-items:center;font-weight:550;}
+.template-fields label.template-toggle input {width:auto;flex:none;}
+@media print { #formTemplatePanel {display:none!important;} }
     </style>
 
   <style id="p8work-integration-style">
@@ -1577,7 +1596,7 @@ body[data-theme="dark"] .match-chip {
   (function () {
     "use strict";
     var TOOL_ID = "consultation-form-manager";
-    var PRODUCT_VERSION = "1.4.5";
+    var PRODUCT_VERSION = "1.4.6";
     var META_KEY = "p8work-tool-meta:" + TOOL_ID;
     window.p8WorkTouchMeta = function () {
       try {
@@ -1687,38 +1706,38 @@ body[data-theme="dark"] .match-chip {
                 <article class="form-sheet" id="formSheet">
                     <div class="consultation-form" id="consultationForm">
                         <header class="paper-header">
-                            <div class="paper-org">HAMILTON CENTER</div>
+                            <div class="paper-org" id="formOrganizationName">HAMILTON CENTER</div>
                             <div class="paper-program" id="printGroupHomeProgram">TRANSITIONAL LIVING – FORT HARRISON</div>
-                            <div class="paper-title">CONSULTATION FORM</div>
+                            <div class="paper-title" id="formDocumentTitle">CONSULTATION FORM</div>
                         </header>
 
                         <div class="form-grid row-two">
-                            <div><strong>Patient Name:</strong> <span id="printName" class="form-value"></span></div>
-                            <div class="inline-entry"><strong>Consult with:</strong> <input id="consultWith" type="text" autocomplete="off" aria-label="Consult with"></div>
+                            <div><strong data-form-label="patientName">Patient Name:</strong> <span id="printName" class="form-value"></span></div>
+                            <div class="inline-entry"><strong data-form-label="consultWith">Consult with:</strong> <input id="consultWith" type="text" autocomplete="off" aria-label="Consult with"></div>
                         </div>
                         <div class="form-grid row-two">
-                            <div><strong>DOB:</strong> <span id="printDob" class="form-value"></span></div>
-                            <div class="inline-entry"><strong>Consult date:</strong> <input id="consultDate" type="text" inputmode="numeric" placeholder="" autocomplete="off" aria-label="Consult date"></div>
+                            <div><strong data-form-label="dob">DOB:</strong> <span id="printDob" class="form-value"></span></div>
+                            <div class="inline-entry"><strong data-form-label="consultDate">Consult date:</strong> <input id="consultDate" type="text" inputmode="numeric" placeholder="" autocomplete="off" aria-label="Consult date"></div>
                         </div>
-                        <div class="form-row"><strong>Patient ID:</strong> <span id="printPatientId" class="form-value"></span></div>
+                        <div class="form-row"><strong data-form-label="patientId">Patient ID:</strong> <span id="printPatientId" class="form-value"></span></div>
 
-                        <div class="form-row diagnosis-row">
-                            <strong>Significant Diagnosis/ History:</strong>
+                        <div class="form-row diagnosis-row" data-optional-form-section="diagnosis">
+                            <strong data-form-label="diagnosis">Significant Diagnosis/ History:</strong>
                             <span id="printDiagnosis" class="form-value multiline"></span>
                         </div>
 
-                        <div class="form-grid insurance-row">
-                            <div><strong>Insurance Type:</strong> <span id="printInsuranceType" class="form-value"></span></div>
-                            <div><strong>Insurance ID:</strong> <span id="printInsuranceId" class="form-value"></span></div>
+                        <div class="form-grid insurance-row" data-optional-form-section="insurance">
+                            <div><strong data-form-label="insuranceType">Insurance Type:</strong> <span id="printInsuranceType" class="form-value"></span></div>
+                            <div><strong data-form-label="insuranceId">Insurance ID:</strong> <span id="printInsuranceId" class="form-value"></span></div>
                         </div>
 
                         <div class="form-grid allergies-row">
-                            <div class="medication-record"><strong>HCI Medication Record Attached</strong></div>
-                            <div class="allergies-cell"><strong>Allergies:</strong> <span id="printAllergies" class="form-value multiline"></span></div>
+                            <div class="medication-record" data-optional-form-section="medicationStatement"><strong>HCI Medication Record Attached</strong></div>
+                            <div class="allergies-cell" data-optional-form-section="allergies"><strong data-form-label="allergies">Allergies:</strong> <span id="printAllergies" class="form-value multiline"></span></div>
                         </div>
 
-                        <section class="paper-section contact-section">
-                            <div class="section-label">Contact Information:</div>
+                        <section class="paper-section contact-section" data-optional-form-section="contact">
+                            <div class="section-label" data-form-label="contacts">Contact Information:</div>
                             <div class="contact-grid">
                                 <div class="contact-primary">
                                     <div><strong id="printGroupHomeLabel">Fort Harrison Group Home:</strong> <span id="printGroupHomeAddress">1175 Ft Harrison Rd, Terre Haute, IN 47807</span></div>
@@ -1726,36 +1745,36 @@ body[data-theme="dark"] .match-chip {
                                     <div><strong id="printGroupHomeNurseLabel">Fort Harrison Group Home Nurse:</strong> <span id="printGroupHomeNurse">Erin Burns, RN</span></div>
                                 </div>
                                 <div class="contact-phone-box">
-                                    <div><strong>Phone</strong><span id="printGroupHomePhone">(812) 231-8274</span></div>
-                                    <div><strong>Fax</strong><span id="printGroupHomeFax">(812) 231-8175</span></div>
+                                    <div><strong data-form-label="phone">Phone</strong><span id="printGroupHomePhone">(812) 231-8274</span></div>
+                                    <div><strong data-form-label="fax">Fax</strong><span id="printGroupHomeFax">(812) 231-8175</span></div>
                                 </div>
                             </div>
                             <div class="section-spacer"></div>
                             <div class="pharmacy-row">
-                                <span><strong>Genoa Pharmacy:</strong> 620 8th Avenue, Terre Haute, IN 47802</span>
-                                <span><strong>Phone:</strong> 812-232-1730</span>
-                                <span><strong>Fax:</strong> 812-232-8362</span>
+                                <span><strong id="pharmacyPrintName">Genoa Pharmacy:</strong> <span id="pharmacyPrintAddress">620 8th Avenue, Terre Haute, IN 47802</span></span>
+                                <span><strong data-form-label="pharmacyPhone">Phone:</strong> <span id="pharmacyPrintPhone">812-232-1730</span></span>
+                                <span><strong data-form-label="pharmacyFax">Fax:</strong> <span id="pharmacyPrintFax">812-232-8362</span></span>
                             </div>
-                            <div><strong>Genoa Email:</strong> TerreHaute-IN-10084@genoa-qol.com / cclaycomb@genoahealthcare.com</div>
+                            <div id="pharmacyEmailsRow"><strong data-form-label="pharmacyEmail">Genoa Email:</strong> <span id="pharmacyPrintEmails">TerreHaute-IN-10084@genoa-qol.com / cclaycomb@genoahealthcare.com</span></div>
                         </section>
 
-                        <section class="paper-section purpose-section">
+                        <section class="paper-section purpose-section" data-optional-form-section="purpose">
                             <div class="purpose-row">
-                                <strong>Purpose of Visit (circle one):</strong>
-                                <span>Follow-Up</span>
-                                <span>Physical</span>
-                                <span>New Complaint:</span>
+                                <strong data-form-label="purpose">Purpose of Visit (circle one):</strong>
+                                <span data-form-label="purpose1">Follow-Up</span>
+                                <span data-form-label="purpose2">Physical</span>
+                                <span data-form-label="purpose3">New Complaint:</span>
                             </div>
                         </section>
 
-                        <section class="paper-section orders-section">
-                            <div class="orders-heading"><strong>Physician’s Findings and Orders</strong> <span class="note">(**Please note that Medication Administration Records are used at the <span id="ordersGroupHomeName">Fort Harrison Group Home</span> where this person resides and ALL information regarding orders to be added AND/OR discontinued is needed to avoid interactions and duplication of therapy! Thank you for your assistance)</span></div>
-                            <div class="orders-label">Findings and New Orders:</div>
+                        <section class="paper-section orders-section" data-optional-form-section="orders">
+                            <div class="orders-heading"><strong data-form-label="ordersHeading">Physician’s Findings and Orders</strong> <span class="note" id="formOrdersNote">(**Please note that Medication Administration Records are used at the <span id="ordersGroupHomeName">Fort Harrison Group Home</span> where this person resides and ALL information regarding orders to be added AND/OR discontinued is needed to avoid interactions and duplication of therapy! Thank you for your assistance)</span></div>
+                            <div class="orders-label" data-form-label="findings">Findings and New Orders:</div>
                             <div class="writing-lines findings-lines" id="findingsLines" aria-hidden="true"></div>
                             <div class="med-question">
-                                <span><strong>Do any medication orders need to be discontinued as a result of findings or new orders?</strong> (circle one)</span>
-                                <strong>YES</strong>
-                                <strong>NO</strong>
+                                <span><strong data-form-label="discontinueQuestion">Do any medication orders need to be discontinued as a result of findings or new orders?</strong> <span data-form-label="circleOne">(circle one)</span></span>
+                                <strong data-form-label="yes">YES</strong>
+                                <strong data-form-label="no">NO</strong>
                             </div>
                             <div class="writing-lines three-lines" aria-hidden="true">
                                 <span class="writing-line"></span>
@@ -1764,9 +1783,9 @@ body[data-theme="dark"] .match-chip {
                             </div>
                         </section>
 
-                        <footer class="paper-footer">
-                            <div class="signature-row"><strong>Physician Signature:</strong> <span class="signature-line"></span></div>
-                            <div class="appointment-row"><strong>Follow-Up Appointment Date:</strong> <span class="short-line"></span><strong>Time:</strong> <span class="short-line time-line"></span></div>
+                        <footer class="paper-footer" data-optional-form-section="footer">
+                            <div class="signature-row"><strong data-form-label="signature">Physician Signature:</strong> <span class="signature-line"></span></div>
+                            <div class="appointment-row"><strong data-form-label="appointmentDate">Follow-Up Appointment Date:</strong> <span class="short-line"></span><strong data-form-label="appointmentTime">Time:</strong> <span class="short-line time-line"></span></div>
                         </footer>
                     </div>
                 </article>
@@ -1776,7 +1795,7 @@ body[data-theme="dark"] .match-chip {
                     <div class="medication-document">
                         <header class="med-print-header">
                             <div class="med-print-organization">HAMILTON CENTER</div>
-                            <h2>CLIENT MEDICATION LIST</h2>
+                            <h2 id="formMedicationTitle">CLIENT MEDICATION LIST</h2>
                         </header>
                         <div class="med-print-client"><strong>Client:</strong> <span data-med-name></span><strong>DOB:</strong> <span data-med-dob></span><strong>Patient ID:</strong> <span data-med-patient-id></span></div>
                         <div class="med-print-meta"><strong>List reviewed:</strong> <span data-med-reviewed></span><span>Compare with the current MAR before use.</span></div>
@@ -1965,6 +1984,17 @@ body[data-theme="dark"] .match-chip {
                     <p class="help-text">Themes change the app interface only. The printed Consultation Form stays black and white.</p>
                 </section>
 
+
+                <section class="panel full-width" id="formTemplatePanel">
+                    <h3>Consultation form template and pharmacy</h3>
+                    <p class="help-text">Edit printed wording, pharmacy details, headings and optional sections here. Client details remain editable through Clients; group-home contacts remain editable under Group Homes. These settings are saved locally and included in both Full Backup and p8Work Master Backup. Changing printed text does not change a client's medication orders.</p>
+                    <div id="formTemplateEditor" class="template-editor"></div>
+                    <div class="button-row" style="margin-top:12px;gap:10px;display:flex;flex-wrap:wrap">
+                        <button class="button button-primary" id="saveFormTemplateButton" type="button">Save Form Template</button>
+                        <button class="button" id="resetFormTemplateButton" type="button">Restore Default Template</button>
+                    </div>
+                    <p class="help-text" id="formTemplateEditorStatus" role="status" aria-live="polite">Changes appear in the printable consultation preview after saving. Long text may prevent the form from fitting on one page.</p>
+                </section>
                 <section class="panel notice-panel">
                     <h3>Backup and transfer</h3>
                     <div class="button-stack">
@@ -2189,7 +2219,7 @@ body[data-theme="dark"] .match-chip {
 // [JS-01] CONSTANTS + SEED DATA
 // ============================================================================
 
-const APP_VERSION = "1.4.5";
+const APP_VERSION = "1.4.6";
 const SCHEMA_VERSION = 1;
 const STORAGE_KEY = "consultation-form-manager-state";
 const CLIENT_FIELDS = [
@@ -2224,6 +2254,125 @@ const DEFAULT_GROUP_HOME = Object.freeze({
     fax: "(812) 231-8175"
 });
 
+const DEFAULT_WORKPLACE_PROFILE = Object.freeze({
+    "organizationName": "HAMILTON CENTER",
+    "programName": "TRANSITIONAL LIVING – FORT HARRISON",
+    "pharmacy": {
+        "name": "Genoa Pharmacy",
+        "address": "620 8th Avenue, Terre Haute, IN 47802",
+        "phone": "812-232-1730",
+        "fax": "812-232-8362",
+        "emails": [
+            "TerreHaute-IN-10084@genoa-qol.com",
+            "cclaycomb@genoahealthcare.com"
+        ]
+    },
+    "notes": {
+        "consultationMedicationInstructions": "Medication Administration Records are used at the group home. All orders to add or discontinue must be communicated to avoid interactions or duplicate therapy."
+    }
+});
+
+
+// Printable consultation template is independent of clients and group-home contacts.
+// Keep the same keys stable: Full Backup and Master Backup carry this object.
+const DEFAULT_FORM_TEMPLATE = Object.freeze({
+    labels: Object.freeze({
+    "documentTitle": "CONSULTATION FORM",
+    "medicationTitle": "CLIENT MEDICATION LIST",
+    "patientName": "Patient Name:",
+    "consultWith": "Consult with:",
+    "dob": "DOB:",
+    "consultDate": "Consult date:",
+    "patientId": "Patient ID:",
+    "diagnosis": "Significant Diagnosis/ History:",
+    "insuranceType": "Insurance Type:",
+    "insuranceId": "Insurance ID:",
+    "allergies": "Allergies:",
+    "contacts": "Contact Information:",
+    "phone": "Phone",
+    "fax": "Fax",
+    "groupHomeSuffix": ":",
+    "supervisorSuffix": " Supervisor:",
+    "nurseSuffix": " Nurse:",
+    "pharmacyPhone": "Phone:",
+    "pharmacyFax": "Fax:",
+    "pharmacyEmail": "{pharmacy} Email:",
+    "purpose": "Purpose of Visit (circle one):",
+    "purpose1": "Follow-Up",
+    "purpose2": "Physical",
+    "purpose3": "New Complaint:",
+    "ordersHeading": "Physician’s Findings and Orders",
+    "ordersNote": "(**Please note that Medication Administration Records are used at the {home} where this person resides and ALL information regarding orders to be added AND/OR discontinued is needed to avoid interactions and duplication of therapy! Thank you for your assistance)",
+    "findings": "Findings and New Orders:",
+    "discontinueQuestion": "Do any medication orders need to be discontinued as a result of findings or new orders?",
+    "circleOne": "(circle one)",
+    "yes": "YES",
+    "no": "NO",
+    "signature": "Physician Signature:",
+    "appointmentDate": "Follow-Up Appointment Date:",
+    "appointmentTime": "Time:",
+    "medAttached": "Medication List Attached",
+    "medNotAttached": "Medication List Not Attached",
+    "medReview": "Medication Review Required Before Printing",
+    "medAbsent": "Medication Record Not Attached"
+}),
+    sections: Object.freeze({
+    "diagnosis": true,
+    "insurance": true,
+    "allergies": true,
+    "medicationStatement": true,
+    "contact": true,
+    "purpose": true,
+    "orders": true,
+    "footer": true
+})
+});
+
+const FORM_TEMPLATE_GROUPS = [
+    { title: "Organization and pharmacy", fields: [
+        ["profile.organizationName", "Organization / letterhead"],
+        ["profile.programName", "Program heading (use {home} for selected home)"],
+        ["profile.pharmacy.name", "Pharmacy name"], ["profile.pharmacy.address", "Pharmacy address"],
+        ["profile.pharmacy.phone", "Pharmacy phone"], ["profile.pharmacy.fax", "Pharmacy fax"],
+        ["profile.pharmacy.emails", "Pharmacy email addresses (one per line)", "textarea"]
+    ]},
+    { title: "Form headings and client labels", fields: [
+        ["labels.documentTitle", "Form title"], ["labels.patientName", "Patient name"], ["labels.dob", "Date of birth"],
+        ["labels.patientId", "Patient ID"], ["labels.consultWith", "Consult with"], ["labels.consultDate", "Consult date"],
+        ["labels.diagnosis", "Diagnosis / history"], ["labels.insuranceType", "Insurance type"], ["labels.insuranceId", "Insurance ID"],
+        ["labels.allergies", "Allergies"], ["labels.medAttached", "Medication list attached text"],
+        ["labels.medNotAttached", "Medication list not attached text"], ["labels.medReview", "Medication review required text"],
+        ["labels.medAbsent", "No medication record text"]
+    ]},
+    { title: "Contact and visit wording", fields: [
+        ["labels.contacts", "Contact section heading"], ["labels.groupHomeSuffix", "Group-home name suffix"],
+        ["labels.supervisorSuffix", "Supervisor label suffix"], ["labels.nurseSuffix", "Nurse label suffix"],
+        ["labels.phone", "Home phone label"], ["labels.fax", "Home fax label"],
+        ["labels.pharmacyPhone", "Pharmacy phone label"], ["labels.pharmacyFax", "Pharmacy fax label"],
+        ["labels.pharmacyEmail", "Pharmacy email label (use {pharmacy})"],
+        ["labels.purpose", "Purpose of visit heading"], ["labels.purpose1", "First visit choice"],
+        ["labels.purpose2", "Second visit choice"], ["labels.purpose3", "Third visit choice"]
+    ]},
+    { title: "Physician orders, signatures and medication attachment", fields: [
+        ["labels.ordersHeading", "Findings / orders heading"],
+        ["labels.ordersNote", "Medication order instructions ({home} inserts selected home)", "textarea"],
+        ["labels.findings", "New orders label"], ["labels.discontinueQuestion", "Discontinue medications question", "textarea"],
+        ["labels.circleOne", "Circle-one hint"], ["labels.yes", "Yes choice"], ["labels.no", "No choice"],
+        ["labels.signature", "Physician signature"], ["labels.appointmentDate", "Follow-up date"],
+        ["labels.appointmentTime", "Follow-up time"], ["labels.medicationTitle", "Medication attachment title"]
+    ]},
+    { title: "Visible printed sections", fields: [
+        ["sections.diagnosis", "Show diagnosis / history", "checkbox"],
+        ["sections.insurance", "Show insurance fields", "checkbox"],
+        ["sections.allergies", "Show allergies", "checkbox"],
+        ["sections.medicationStatement", "Show medication attachment status", "checkbox"],
+        ["sections.contact", "Show home and pharmacy contacts", "checkbox"],
+        ["sections.purpose", "Show purpose of visit", "checkbox"],
+        ["sections.orders", "Show findings and physician orders", "checkbox"],
+        ["sections.footer", "Show signature and appointment lines", "checkbox"]
+    ]}
+];
+
 const DEFAULT_STATE = {
     schemaVersion: SCHEMA_VERSION,
     appVersion: APP_VERSION,
@@ -2234,6 +2383,8 @@ const DEFAULT_STATE = {
     consultDate: "",
     theme: "classic-blue",
     groupHomes: [{ ...DEFAULT_GROUP_HOME }],
+    workplaceProfile: cloneWorkplaceProfile(DEFAULT_WORKPLACE_PROFILE),
+    formTemplate: cloneFormTemplate(DEFAULT_FORM_TEMPLATE),
     selectedGroupHomeId: DEFAULT_GROUP_HOME.id,
     // Active snapshot retained for backward-compatible backups from v1.0.x.
     groupHome: { ...DEFAULT_GROUP_HOME },
@@ -2246,6 +2397,20 @@ const DEFAULT_STATE = {
 
 let state = loadState();
 let clientFilter = "active";
+
+function cloneWorkplaceProfile(value) { return JSON.parse(JSON.stringify(value)); }
+function cloneFormTemplate(value) { return JSON.parse(JSON.stringify(value)); }
+function normalizeFormTemplate(source) {
+    const raw = source && typeof source === "object" && !Array.isArray(source) ? source : {};
+    const result = cloneFormTemplate(DEFAULT_FORM_TEMPLATE);
+    for (const key of Object.keys(result.labels)) {
+        if (typeof raw.labels?.[key] === "string") result.labels[key] = raw.labels[key].slice(0, 1200);
+    }
+    for (const key of Object.keys(result.sections)) {
+        if (typeof raw.sections?.[key] === "boolean") result.sections[key] = raw.sections[key];
+    }
+    return result;
+}
 
 function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -2276,7 +2441,11 @@ function hydrateState(source = {}) {
         ...clone(DEFAULT_STATE),
         ...source,
         clients: Array.isArray(source.clients) ? source.clients : clone(SEED_CLIENTS),
-        pending: Array.isArray(source.pending) ? source.pending : []
+        pending: Array.isArray(source.pending) ? source.pending : [],
+        workplaceProfile: source.workplaceProfile && typeof source.workplaceProfile === "object" && !Array.isArray(source.workplaceProfile)
+            ? { ...cloneWorkplaceProfile(DEFAULT_WORKPLACE_PROFILE), ...source.workplaceProfile, pharmacy: { ...DEFAULT_WORKPLACE_PROFILE.pharmacy, ...(source.workplaceProfile.pharmacy || {}) } }
+            : cloneWorkplaceProfile(DEFAULT_WORKPLACE_PROFILE),
+        formTemplate: normalizeFormTemplate(source.formTemplate)
     };
 
     // An explicit groupHomes array, including an empty array, is user data and must
@@ -2644,6 +2813,9 @@ function switchView(viewName) {
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-current", active ? "page" : "false");
     });
+    // Recalculate only after the printable sheet is visible; a hidden sheet
+    // has zero available height and would otherwise show a false overflow warning.
+    if (viewName === "form") requestAnimationFrame(fitFormToPage);
 }
 
 function renderAll() {
@@ -2654,6 +2826,7 @@ function renderAll() {
     renderPending();
     renderForm();
     renderGroupHomeSettings();
+    renderFormTemplateEditor();
     renderUndoState();
     document.body.dataset.theme = state.theme || "classic-blue";
     refs.themeSelector.value = state.theme || "classic-blue";
@@ -2808,6 +2981,124 @@ function escapeHtml(value) {
 // [JS-04] CONSULTATION FORM + PRINT FITTING
 // ============================================================================
 
+
+function profileForForm() {
+    const p = state.workplaceProfile || DEFAULT_WORKPLACE_PROFILE;
+    return { organizationName: typeof p.organizationName === "string" ? p.organizationName : "",
+        programName: typeof p.programName === "string" ? p.programName : "",
+        pharmacy: { ...DEFAULT_WORKPLACE_PROFILE.pharmacy, ...(p.pharmacy || {}) } };
+}
+function formatProgramHeading(text, groupHome) {
+    const header = getGroupHomeHeaderName(groupHome);
+    // Legacy releases automatically changed this specific factory default when a home was selected.
+    if (text === DEFAULT_WORKPLACE_PROFILE.programName) return header ? `TRANSITIONAL LIVING – ${header}` : "TRANSITIONAL LIVING";
+    return String(text || "").replace(/\{home\}/gi, header);
+}
+function formatFormText(text, groupHome) {
+    return String(text ?? "").replace(/\{home\}/gi, normalizeText(groupHome.name) || "Group Home");
+}
+function applyFormTemplate() {
+    const formTemplate = normalizeFormTemplate(state.formTemplate);
+    const fields = formTemplate.labels;
+    const groupHome = getSelectedGroupHome();
+    const profile = profileForForm();
+    document.querySelector("#formOrganizationName").textContent = profile.organizationName;
+    document.querySelector("#printGroupHomeProgram").textContent = formatProgramHeading(profile.programName, groupHome);
+    document.querySelector("#formDocumentTitle").textContent = fields.documentTitle;
+    document.querySelector("#formMedicationTitle").textContent = fields.medicationTitle;
+    document.querySelectorAll("[data-form-label]").forEach(element => {
+        const key = element.dataset.formLabel;
+        if (Object.prototype.hasOwnProperty.call(fields, key)) element.textContent =
+            key === "pharmacyEmail" ? fields[key].replace(/\{pharmacy\}/gi, profile.pharmacy.name || "Pharmacy") : fields[key];
+    });
+    document.querySelector("#formOrdersNote").textContent = formatFormText(fields.ordersNote, groupHome);
+    document.querySelector("#printGroupHomeLabel").textContent = `${groupHome.name || "Group Home"}${fields.groupHomeSuffix}`;
+    document.querySelector("#printGroupHomeSupervisorLabel").textContent = `${groupHome.name || "Group Home"}${fields.supervisorSuffix}`;
+    document.querySelector("#printGroupHomeNurseLabel").textContent = `${groupHome.name || "Group Home"}${fields.nurseSuffix}`;
+    const pharmacy = profile.pharmacy;
+    document.querySelector("#pharmacyPrintName").textContent = `${pharmacy.name || ""}:`;
+    document.querySelector("#pharmacyPrintAddress").textContent = pharmacy.address || "";
+    document.querySelector("#pharmacyPrintPhone").textContent = pharmacy.phone || "";
+    document.querySelector("#pharmacyPrintFax").textContent = pharmacy.fax || "";
+    const emails = Array.isArray(pharmacy.emails) ? pharmacy.emails : [];
+    document.querySelector("#pharmacyPrintEmails").textContent = emails.join(" / ");
+    document.querySelector("#pharmacyEmailsRow").hidden = !emails.length;
+    document.querySelectorAll("[data-optional-form-section]").forEach(element => {
+        element.hidden = formTemplate.sections[element.dataset.optionalFormSection] === false;
+    });
+}
+function renderFormTemplateEditor() {
+    const editor = document.querySelector("#formTemplateEditor");
+    editor.replaceChildren();
+    const profile = profileForForm();
+    const template = normalizeFormTemplate(state.formTemplate);
+    for (const group of FORM_TEMPLATE_GROUPS) {
+        const fieldset = document.createElement("fieldset"); fieldset.className = "template-group";
+        const legend = document.createElement("legend"); legend.textContent = group.title; fieldset.append(legend);
+        const grid = document.createElement("div"); grid.className = "template-fields";
+        for (const [path, labelText, type] of group.fields) {
+            const label = document.createElement("label");
+            const input = type === "textarea" ? document.createElement("textarea") : document.createElement("input");
+            if (type === "checkbox") { input.type = "checkbox"; label.classList.add("template-toggle"); }
+            else if (type !== "textarea") input.type = "text";
+            input.dataset.formPath = path;
+            const bits = path.split(".");
+            let value = bits[0] === "profile" ? profile : template;
+            for (const part of (bits[0] === "profile" ? bits.slice(1) : bits)) value = value?.[part];
+            if (path === "profile.pharmacy.emails") value = (Array.isArray(value) ? value : []).join("\n");
+            if (type === "checkbox") input.checked = Boolean(value);
+            else { input.value = String(value ?? ""); input.maxLength = type === "textarea" ? 1200 : 300; }
+            const caption = document.createElement("span");caption.textContent = labelText;
+            if (type === "checkbox") label.append(input,caption);
+            else label.append(caption,input);
+            grid.append(label);
+        }
+        fieldset.append(grid); editor.append(fieldset);
+    }
+}
+function readFormTemplateEditor() {
+    const profile = cloneWorkplaceProfile(state.workplaceProfile || DEFAULT_WORKPLACE_PROFILE);
+    profile.pharmacy = { ...DEFAULT_WORKPLACE_PROFILE.pharmacy, ...(profile.pharmacy || {}) };
+    const formTemplate = normalizeFormTemplate(state.formTemplate);
+    document.querySelectorAll("#formTemplateEditor [data-form-path]").forEach(input => {
+        const path = input.dataset.formPath.split(".");
+        let target = path[0] === "profile" ? profile : formTemplate;
+        for (const bit of (path[0] === "profile" ? path.slice(1, -1) : path.slice(0, -1))) target = target[bit];
+        const key = path[path.length-1];
+        target[key] = input.type === "checkbox" ? input.checked
+            : input.dataset.formPath === "profile.pharmacy.emails"
+                ? input.value.split(/[\n;,]+/).map(email => email.trim()).filter(Boolean)
+                : input.value.trim();
+    });
+    profile.notes = {...(profile.notes || {}), consultationMedicationInstructions: formTemplate.labels.ordersNote};
+    return { profile, formTemplate };
+}
+function saveFormTemplateEditor() {
+    const { profile, formTemplate } = readFormTemplateEditor();
+    const oldProfile = state.workplaceProfile, oldTemplate = state.formTemplate;
+    state.workplaceProfile = profile;
+    state.formTemplate = formTemplate;
+    try { saveState(); }
+    catch (error) {
+        state.workplaceProfile = oldProfile; state.formTemplate = oldTemplate;
+        toast("The template could not be saved. Your previous settings were kept.", true); return;
+    }
+    renderForm();
+    renderFormTemplateEditor();
+    toast("Consultation template and pharmacy saved. Include them in your next backup.");
+    document.querySelector("#formTemplateEditorStatus").textContent = "Saved to this browser. Check the printable form preview for page fit.";
+}
+function resetFormTemplateEditor() {
+    if (!confirm("Restore the original consultation wording, printed-section choices, organization and pharmacy details? Saved clients and group homes will not be changed.")) return;
+    const oldProfile = state.workplaceProfile, oldTemplate = state.formTemplate;
+    state.workplaceProfile = cloneWorkplaceProfile(DEFAULT_WORKPLACE_PROFILE);
+    state.formTemplate = cloneFormTemplate(DEFAULT_FORM_TEMPLATE);
+    try { saveState(); }
+    catch (error) { state.workplaceProfile = oldProfile; state.formTemplate = oldTemplate;toast("Reset could not be saved; previous settings were kept.", true);return; }
+    renderFormTemplateEditor(); renderForm();
+    toast("Original consultation template restored.");
+}
+
 function renderForm() {
     const client = findClient(state.selectedClientId);
     document.querySelector("#printName").textContent = client?.name || "";
@@ -2820,14 +3111,9 @@ function renderForm() {
 
     const groupHome = getSelectedGroupHome();
     const groupHomeName = normalizeText(groupHome.name);
-    const groupHomeHeader = getGroupHomeHeaderName(groupHome);
-    document.querySelector("#printGroupHomeProgram").textContent = groupHomeHeader ? `TRANSITIONAL LIVING – ${groupHomeHeader}` : "TRANSITIONAL LIVING";
-    document.querySelector("#ordersGroupHomeName").textContent = groupHomeName || "Group Home";
-    document.querySelector("#printGroupHomeLabel").textContent = groupHomeName ? `${groupHomeName}:` : "Group Home:";
+    applyFormTemplate();
     document.querySelector("#printGroupHomeAddress").textContent = groupHome.address || "";
-    document.querySelector("#printGroupHomeSupervisorLabel").textContent = groupHomeName ? `${groupHomeName} Supervisor:` : "Supervisor:";
     document.querySelector("#printGroupHomeSupervisor").textContent = groupHome.supervisor || "";
-    document.querySelector("#printGroupHomeNurseLabel").textContent = groupHomeName ? `${groupHomeName} Nurse:` : "Nurse:";
     document.querySelector("#printGroupHomeNurse").textContent = groupHome.nurse || "";
     document.querySelector("#printGroupHomePhone").textContent = groupHome.phone || "";
     document.querySelector("#printGroupHomeFax").textContent = groupHome.fax || "";
@@ -3207,8 +3493,11 @@ function createPdfExportSheet(client, consultWith, consultDate, withMedicationAt
     setExportText(sheet, "#printInsuranceId", client.insuranceId);
     setExportText(sheet, "#printAllergies", client.allergies);
     const medStatement = sheet.querySelector(".medication-record strong");
-    if (medStatement) medStatement.textContent = withMedicationAttachment && clientMedications(client).length
-        ? "Medication List Attached" : "Medication List Not Attached";
+    if (medStatement) {
+        const labels = normalizeFormTemplate(state.formTemplate).labels;
+        medStatement.textContent = withMedicationAttachment && clientMedications(client).length
+            ? labels.medAttached : labels.medNotAttached;
+    }
     setExportInput(sheet, "#consultWith", consultWith);
     setExportInput(sheet, "#consultDate", consultDate);
 
@@ -3335,7 +3624,7 @@ function captureRenderedBorders(sheet, sheetRect, xScale, yScale, line) {
 
 function captureRenderedPseudoElements(sheet, sheetRect, xScale, yScale, pageHeight, commands, line) {
     const contactPrimary = sheet.querySelector(".contact-primary");
-    if (contactPrimary) {
+    if (contactPrimary && contactPrimary.getClientRects().length) {
         const rect = contactPrimary.getBoundingClientRect();
         const left = (rect.right - sheetRect.left) * xScale;
         const right = (rect.right + 8 - sheetRect.left) * xScale;
@@ -3347,7 +3636,7 @@ function captureRenderedPseudoElements(sheet, sheetRect, xScale, yScale, pageHei
     }
 
     const heading = sheet.querySelector(".orders-heading");
-    if (heading) {
+    if (heading && heading.getClientRects().length) {
         const rect = heading.getBoundingClientRect();
         const inchPx = 96;
         const blue = "0.306 0.498 0.702";
@@ -5012,11 +5301,12 @@ function renderMedicationSheet(client) {
     refs.medicationSheet.querySelector("[data-med-stale-alert]").hidden = !hasMedications || reviewedToday;
     const notice = document.querySelector("#medicationFreshnessNotice");
     notice.hidden = !attachmentEnabled || !hasMedications || reviewedToday;
+    const labels = normalizeFormTemplate(state.formTemplate).labels;
     document.querySelector(".medication-record strong").textContent = !attachmentEnabled
-        ? "Medication List Not Attached"
+        ? labels.medNotAttached
         : hasMedications
-            ? (reviewedToday ? "Medication List Attached" : "Medication Review Required Before Printing")
-            : "Medication Record Not Attached";
+            ? (reviewedToday ? labels.medAttached : labels.medReview)
+            : labels.medAbsent;
     document.querySelector("#manageSelectedMedications").disabled = !client;
     const container = refs.medicationSheet;
     container.querySelector("[data-med-name]").textContent = client?.name || "";
@@ -6628,6 +6918,9 @@ function bindEvents() {
     document.querySelector("#closeMergeDialog").addEventListener("click", () => refs.mergeDialog.close());
     document.querySelector("#cancelMergeButton").addEventListener("click", () => refs.mergeDialog.close());
     refs.undoMergeButton.addEventListener("click", undoLastMerge);
+
+    document.querySelector("#saveFormTemplateButton").addEventListener("click", saveFormTemplateEditor);
+    document.querySelector("#resetFormTemplateButton").addEventListener("click", resetFormTemplateEditor);
 
     refs.themeSelector.addEventListener("change", () => {
         state.theme = refs.themeSelector.value;

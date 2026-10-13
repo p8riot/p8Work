@@ -1,6 +1,6 @@
 (function (global) {
   "use strict";
-  const APP_VERSION='1.2.4';
+  const APP_VERSION='1.3.2';
   const RELEASE='Beta 4';
   const FORMAT=1;
   const reg=global.P8WORK_REGISTRY;
@@ -26,7 +26,8 @@
     for (const id of toolIds) {
       const tool=reg.byId[id]; if (!tool) continue;
       const captured=adapters.captureEntries(tool);
-      const entries=id==='consultation-form-manager' ? await global.P8WORK_MAR_MEDIA.exportEntries(captured) : captured;
+      const preserved=global.P8WORK_PRESERVATION.prepareEntries(tool,captured);
+      const entries=id==='consultation-form-manager' ? await global.P8WORK_MAR_MEDIA.exportEntries(preserved) : preserved;
       const meta=adapters.metaFromEntries(tool,entries);
       payload.tools[id]={toolId:id,name:tool.name,productVersion:tool.version,schemaVersion:tool.schemaVersion,hubContract:tool.hubContract,capturedAt:new Date().toISOString(),meta,entries};
       payload.tools[id].checksum=await cryptoApi.sha256Text(cryptoApi.canonical(entries));

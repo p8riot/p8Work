@@ -1,3 +1,41 @@
+# p8Work 1.3.2 Beta 4 — Editable consultation template and pharmacy
+
+After updating the existing GitHub Pages files, open **Consultation Manager → Settings → Consultation form template and pharmacy** to change the organization name, printed wording, pharmacy name/address/phone/fax/emails, or section visibility. Click Save Form Template, then check the form preview and make a fresh encrypted Master Backup with all four tools selected. Existing clients, group homes, medication images, File Library and other three tools are preserved. A standalone Consultation Manager Full Backup also retains the form settings. Your File Library requires its separate encrypted `.p8lib` backup.
+
+This does **not** remove any hard-coded workplace defaults yet. The privacy cleanup, one visible app version, centralized attribution and stable v1.0.0 remain future release steps after backup verification and broader testing. Do not upload private client documents, records, or backup files to GitHub.
+
+See `docs/BETA4-EDITABLE-CONSULTATION-TEMPLATE-HANDOFF.md`.
+
+---
+
+# p8Work 1.3.1 Beta 4 — Backup Safety Hotfix (Pre-Privacy-Cleanup)
+
+This is a narrowly scoped BACKUP PRESERVATION update. No embedded workplace names, staff, pharmacy details, or form branding have been removed yet. Do not call this 1.0.0. Existing user data, storage keys, document library, and all four tool functions are retained.
+
+**First priority:** Once deployed to the SAME GitHub Pages address and browser profile, create an **encrypted Master Backup selecting all four tools**, then save it in an employer-approved secure location. The backup now preserves unsaved Consultation Form Manager group-home defaults and pharmacy/organization print details, and Monthly Chore Planner facility/starter settings. Saved ShiftView employee rosters, locations, schedules, attendance, disciplinary records, TransportView staff/shifts/appointments, consultation clients and MAR images are included through existing storage adapters. A broken saved tool record or a missing MAR image stops the backup.
+
+**Important limitations:** The Master Backup does **not** contain File Library documents. You must create a separate encrypted `.p8lib` backup in File Library. Neither browser storage nor downloaded files should be assumed encrypted at rest; protect both backups and use the approved workplace storage policy. This release does not remove the hardcoded workplace values from the public source; that cleanup is deferred until backup coverage and restore tests are completed. Existing encrypted backups remain compatible (format 1).
+
+See `docs/BETA4-WORKPLACE-BACKUP-SAFETY-HANDOFF.md` for verification details.
+
+---
+
+# p8Work 1.3.0 — File Library (Beta 4)
+
+**Deploy to GitHub Pages:** Extract this ZIP and upload its contents to the repository root. Do NOT upload the ZIP itself or commit real client files or backups. Do not clear your existing browser site data; the four established tools retain their storage locations.
+
+**New File Library:** Select **File Library** on the navigation menu. Drag and drop files or use **Import Files**. Imports create actual independent browser-local copies, not path links, so moving/deleting originals does not break imported files. Create nested folders, rename, move, tag, categorize, archive, Trash/restore or permanently delete files; preview supported file types and download original-byte copies.
+
+**File protection:** File Library documents are stored in unencrypted on-device browser IndexedDB, limited to **160 MiB total** this release. Browser quota and organization policies can further restrict storage. The existing Master Backup does **not** include the File Library. Make a **separate encrypted `.p8lib` backup** from the library section and validate recovery before removing your only other copy. Keep backups/passwords in an employer-approved secure location. Browser site data clearance, a changed site origin, device loss or policy can erase stored data. GitHub Pages does not store any uploaded library documents.
+
+**Also repaired:** The stale “Update ready” prompt caused by unsynchronized 1.2.5 build IDs. The update manager, `release.json`, and service-worker cache are synchronized for 1.3.0.
+
+See `docs/BETA4-FILE-LIBRARY-HANDOFF.md` for design, test limits and security considerations.
+
+---
+
+## Earlier releases (preserved)
+
 # p8Work 1.2.5, Beta 4, consultation-only printing
 
 # Beta 4, consultation-only print/PDF option

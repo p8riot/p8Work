@@ -1,6 +1,6 @@
 (function (global) {
   "use strict";
-  const CURRENT_BUILD='1.2.4-beta4-mar-storage-fix';
+  const CURRENT_BUILD='1.3.2-beta4-editable-consultation-template';
   let registration=null, waiting=null, deferredInstall=null, listeners=[], remoteRelease=null;
   function emit(type, detail) { listeners.forEach(fn=>{ try{fn(type,detail||{});}catch(_){}}); }
   function on(fn) { listeners.push(fn); return ()=>{listeners=listeners.filter(x=>x!==fn);}; }

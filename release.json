@@ -1,15 +1,15 @@
 {
   "name": "p8Work",
-  "version": "1.2.5",
+  "version": "1.3.2",
   "releaseStage": "Beta 4",
-  "buildId": "1.2.5-beta4-consult-only",
+  "buildId": "1.3.2-beta4-editable-consultation-template",
   "hubContract": 1,
   "backupFormat": 1,
-  "cacheGeneration": 14,
+  "cacheGeneration": 17,
   "tools": {
     "shiftview": "0.7.4",
     "transportview": "0.1.6",
-    "consultation-form-manager": "1.4.5",
+    "consultation-form-manager": "1.4.6",
     "monthly-chore-planner": "0.2.3"
   }
 }
