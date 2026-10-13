@@ -1838,24 +1838,7 @@ Print styling is intentionally independent from the selected screen theme.
                     </section>
 
 
-                    <section class="config-card">
-                        <h3>Application information</h3>
-                        <dl class="app-meta-list">
-                            <div>
-                                <dt>Product version</dt>
-                                <dd id="productVersion">0.2.3</dd>
-                            </div>
-                            <div>
-                                <dt>Release stage</dt>
-                                <dd id="productReleaseStage">Alpha 1</dd>
-                            </div>
-                            <div>
-                                <dt>Local data format</dt>
-                                <dd id="productDataVersion">Schema 1 · Revision 3</dd>
-                            </div>
-                        </dl>
-                        <p class="settings-help app-attribution">Built using the p8Core App Builder. Framework runtime details remain in technical source metadata.</p>
-                    </section>
+
 
                     <section class="config-card danger-card">
                         <h3>Reset entire tool</h3>
@@ -1869,20 +1852,7 @@ Print styling is intentionally independent from the selected screen theme.
         <!-- ==================================================================
              [HTML-05] FOOTER + CONFIRMATION DIALOG
              ================================================================== -->
-        <footer class="app-footer">
-            <div class="app-footer-meta">
-                <div>
-                    <span id="footerProductVersion">Monthly Chore Planner 0.2.3</span>
-                    <span aria-hidden="true"> · </span>
-                    <span>Created by J. Coons</span>
-                    <span aria-hidden="true"> · </span>
-                    <span>Built using the p8Core App Builder</span>
-                </div>
-                <span class="footer-legal">
-                    Authorized for use only at Fort Harrison Group Home. Copying, redistribution, or use outside Fort Harrison Group Home is prohibited.
-                </span>
-            </div>
-        </footer>
+
     </div>
 
     <dialog id="confirmDialog" aria-labelledby="confirmTitle">
@@ -3913,7 +3883,7 @@ window.p8riotAppConfig = {
             appVersion: APP_VERSION,
             selectedMonth: currentMonthKey(),
             settings: {
-                facilityName: "Fort Harrison Group Home",
+                facilityName: "",
                 headerLabel: "Group Home Monthly Chores",
                 sheetTitle: "Monthly Chore Sheet",
                 dailyLabel: "Daily Chores",
@@ -6595,12 +6565,6 @@ window.p8riotAppConfig = {
         document.getElementById("appTitle").textContent = toolTitle;
         document.title = toolTitle;
 
-        document.getElementById("productVersion").textContent = BUILD_INFO.version;
-        document.getElementById("productReleaseStage").textContent = BUILD_INFO.releaseLabel;
-        document.getElementById("productDataVersion").textContent =
-            "Schema " + BUILD_INFO.schemaVersion + " · Revision " + BUILD_INFO.dataRevision;
-        document.getElementById("footerProductVersion").textContent =
-            APP_CONFIG.name + " " + BUILD_INFO.version;
     }
 
     ["facilityName","headerLabel","sheetTitle","dailyLabel","weeklyLabel","laundryLabel","mealLabel"].forEach(function (id) {

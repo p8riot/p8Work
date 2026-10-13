@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
-    Consultation Form Manager 1.3.4 — p8Work-integrated edition
-    Built using the p8Core App Builder
+    Consultation Form Manager — p8Work-integrated edition
+    Internal compatibility version remains separate from the app release.
     This file contains the application HTML, CSS, JavaScript, and icon.
     Screenshot OCR intentionally uses the same external Tesseract resources as the packaged build.
 -->
@@ -1638,7 +1638,7 @@ body[data-theme="dark"] .match-chip {
          ================================================================== -->
     <header class="app-header no-print">
         <div>
-            <p class="eyebrow">Hamilton Center · Transitional Living</p>
+            <p class="eyebrow">Consultation management</p>
             <h1>Consultation Form Manager</h1>
         </div>
 
@@ -1706,8 +1706,8 @@ body[data-theme="dark"] .match-chip {
                 <article class="form-sheet" id="formSheet">
                     <div class="consultation-form" id="consultationForm">
                         <header class="paper-header">
-                            <div class="paper-org" id="formOrganizationName">HAMILTON CENTER</div>
-                            <div class="paper-program" id="printGroupHomeProgram">TRANSITIONAL LIVING – FORT HARRISON</div>
+                            <div class="paper-org" id="formOrganizationName"></div>
+                            <div class="paper-program" id="printGroupHomeProgram"></div>
                             <div class="paper-title" id="formDocumentTitle">CONSULTATION FORM</div>
                         </header>
 
@@ -1740,22 +1740,22 @@ body[data-theme="dark"] .match-chip {
                             <div class="section-label" data-form-label="contacts">Contact Information:</div>
                             <div class="contact-grid">
                                 <div class="contact-primary">
-                                    <div><strong id="printGroupHomeLabel">Fort Harrison Group Home:</strong> <span id="printGroupHomeAddress">1175 Ft Harrison Rd, Terre Haute, IN 47807</span></div>
-                                    <div><strong id="printGroupHomeSupervisorLabel">Fort Harrison Group Home Supervisor:</strong> <span id="printGroupHomeSupervisor">Andrew Toon</span></div>
-                                    <div><strong id="printGroupHomeNurseLabel">Fort Harrison Group Home Nurse:</strong> <span id="printGroupHomeNurse">Erin Burns, RN</span></div>
+                                    <div><strong id="printGroupHomeLabel">Group Home:</strong> <span id="printGroupHomeAddress"></span></div>
+                                    <div><strong id="printGroupHomeSupervisorLabel">Group Home Supervisor:</strong> <span id="printGroupHomeSupervisor"></span></div>
+                                    <div><strong id="printGroupHomeNurseLabel">Group Home Nurse:</strong> <span id="printGroupHomeNurse"></span></div>
                                 </div>
                                 <div class="contact-phone-box">
-                                    <div><strong data-form-label="phone">Phone</strong><span id="printGroupHomePhone">(812) 231-8274</span></div>
-                                    <div><strong data-form-label="fax">Fax</strong><span id="printGroupHomeFax">(812) 231-8175</span></div>
+                                    <div><strong data-form-label="phone">Phone</strong><span id="printGroupHomePhone"></span></div>
+                                    <div><strong data-form-label="fax">Fax</strong><span id="printGroupHomeFax"></span></div>
                                 </div>
                             </div>
                             <div class="section-spacer"></div>
                             <div class="pharmacy-row">
-                                <span><strong id="pharmacyPrintName">Genoa Pharmacy:</strong> <span id="pharmacyPrintAddress">620 8th Avenue, Terre Haute, IN 47802</span></span>
+                                <span><strong id="pharmacyPrintName">Pharmacy:</strong> <span id="pharmacyPrintAddress"></span></span>
                                 <span><strong data-form-label="pharmacyPhone">Phone:</strong> <span id="pharmacyPrintPhone">812-232-1730</span></span>
                                 <span><strong data-form-label="pharmacyFax">Fax:</strong> <span id="pharmacyPrintFax">812-232-8362</span></span>
                             </div>
-                            <div id="pharmacyEmailsRow"><strong data-form-label="pharmacyEmail">Genoa Email:</strong> <span id="pharmacyPrintEmails">TerreHaute-IN-10084@genoa-qol.com / cclaycomb@genoahealthcare.com</span></div>
+                            <div id="pharmacyEmailsRow"><strong data-form-label="pharmacyEmail">Pharmacy Email:</strong> <span id="pharmacyPrintEmails"></span></div>
                         </section>
 
                         <section class="paper-section purpose-section" data-optional-form-section="purpose">
@@ -1768,7 +1768,7 @@ body[data-theme="dark"] .match-chip {
                         </section>
 
                         <section class="paper-section orders-section" data-optional-form-section="orders">
-                            <div class="orders-heading"><strong data-form-label="ordersHeading">Physician’s Findings and Orders</strong> <span class="note" id="formOrdersNote">(**Please note that Medication Administration Records are used at the <span id="ordersGroupHomeName">Fort Harrison Group Home</span> where this person resides and ALL information regarding orders to be added AND/OR discontinued is needed to avoid interactions and duplication of therapy! Thank you for your assistance)</span></div>
+                            <div class="orders-heading"><strong data-form-label="ordersHeading">Physician’s Findings and Orders</strong> <span class="note" id="formOrdersNote">(**Please note that Medication Administration Records are used at the <span id="ordersGroupHomeName">group home</span> where this person resides and ALL information regarding orders to be added AND/OR discontinued is needed to avoid interactions and duplication of therapy! Thank you for your assistance)</span></div>
                             <div class="orders-label" data-form-label="findings">Findings and New Orders:</div>
                             <div class="writing-lines findings-lines" id="findingsLines" aria-hidden="true"></div>
                             <div class="med-question">
@@ -1794,7 +1794,7 @@ body[data-theme="dark"] .match-chip {
                 <article class="medication-sheet" id="medicationSheet" aria-label="Medication list, separate sheet">
                     <div class="medication-document">
                         <header class="med-print-header">
-                            <div class="med-print-organization">HAMILTON CENTER</div>
+                            <div class="med-print-organization"></div>
                             <h2 id="formMedicationTitle">CLIENT MEDICATION LIST</h2>
                         </header>
                         <div class="med-print-client"><strong>Client:</strong> <span data-med-name></span><strong>DOB:</strong> <span data-med-dob></span><strong>Patient ID:</strong> <span data-med-patient-id></span></div>
@@ -1884,7 +1884,7 @@ body[data-theme="dark"] .match-chip {
                         <button class="button" id="saveNewGroupHomeButton" type="button">Save as New Group Home</button>
                         <button class="button button-danger" id="deleteGroupHomeButton" type="button">Delete Saved Group Home</button>
                     </div>
-                    <p class="help-text">Fort Harrison is protected as the built-in default. Restoring it resets that saved entry without deleting your other group homes.</p>
+                    <p class="help-text">Saved group homes are editable and can be removed. Restore your workplace details from your secure backup when needed.</p>
                 </section>
 
             </div>
@@ -2031,10 +2031,6 @@ body[data-theme="dark"] .match-chip {
         </section>
     </main>
 
-    <footer class="app-footer no-print">
-        <span>Consultation Form Manager</span>
-        <span>Built using the p8Core App Builder</span>
-    </footer>
 
     <!-- ==================================================================
          [HTML-06] EDIT CLIENT DIALOG
@@ -2244,32 +2240,13 @@ const FIELD_LABELS = {
 
 const SEED_CLIENTS = [];
 
-const DEFAULT_GROUP_HOME = Object.freeze({
-    id: "group-home-fort-harrison",
-    name: "Fort Harrison Group Home",
-    address: "1175 Ft Harrison Rd, Terre Haute, IN 47807",
-    supervisor: "Andrew Toon",
-    nurse: "Erin Burns, RN",
-    phone: "(812) 231-8274",
-    fax: "(812) 231-8175"
-});
-
+// Public builds contain no workplace/personnel/pharmacy seeds.
+// Existing user records and old backup payloads retain their stored values.
+const DEFAULT_GROUP_HOME = Object.freeze({id: "", name: "", address: "", supervisor: "", nurse: "", phone: "", fax: ""});
 const DEFAULT_WORKPLACE_PROFILE = Object.freeze({
-    "organizationName": "HAMILTON CENTER",
-    "programName": "TRANSITIONAL LIVING – FORT HARRISON",
-    "pharmacy": {
-        "name": "Genoa Pharmacy",
-        "address": "620 8th Avenue, Terre Haute, IN 47802",
-        "phone": "812-232-1730",
-        "fax": "812-232-8362",
-        "emails": [
-            "TerreHaute-IN-10084@genoa-qol.com",
-            "cclaycomb@genoahealthcare.com"
-        ]
-    },
-    "notes": {
-        "consultationMedicationInstructions": "Medication Administration Records are used at the group home. All orders to add or discontinue must be communicated to avoid interactions or duplicate therapy."
-    }
+    organizationName: "", programName: "",
+    pharmacy: {name: "", address: "", phone: "", fax: "", emails: []},
+    notes: {consultationMedicationInstructions: "Medication orders to add or discontinue should be confirmed against the current authorized MAR."}
 });
 
 
@@ -2382,10 +2359,10 @@ const DEFAULT_STATE = {
     consultWith: "",
     consultDate: "",
     theme: "classic-blue",
-    groupHomes: [{ ...DEFAULT_GROUP_HOME }],
+    groupHomes: [],
     workplaceProfile: cloneWorkplaceProfile(DEFAULT_WORKPLACE_PROFILE),
     formTemplate: cloneFormTemplate(DEFAULT_FORM_TEMPLATE),
-    selectedGroupHomeId: DEFAULT_GROUP_HOME.id,
+    selectedGroupHomeId: "",
     // Active snapshot retained for backward-compatible backups from v1.0.x.
     groupHome: { ...DEFAULT_GROUP_HOME },
     undoMerge: null
@@ -2456,17 +2433,11 @@ function hydrateState(source = {}) {
         ? source.groupHomes.map((home, index) => normalizeGroupHome(home, `group-home-${index + 1}`)).filter(home => home.name)
         : [];
 
-    if (!hasGroupHomeCollection) {
-        const legacySource = source.groupHome && typeof source.groupHome === "object" ? source.groupHome : DEFAULT_GROUP_HOME;
-        const legacy = normalizeGroupHome({ ...DEFAULT_GROUP_HOME, ...legacySource }, DEFAULT_GROUP_HOME.id);
-        const isFortHarrison = legacy.name.toLowerCase() === DEFAULT_GROUP_HOME.name.toLowerCase();
-        if (isFortHarrison) {
-            legacy.id = DEFAULT_GROUP_HOME.id;
-            homes = [legacy];
-        } else {
-            legacy.id = "group-home-migrated";
-            homes = [{ ...DEFAULT_GROUP_HOME }, legacy];
-        }
+    if (!hasGroupHomeCollection && source.groupHome && typeof source.groupHome === "object") {
+        // Pre-collection backups store one active group-home snapshot. Restore
+        // that actual saved value, not a hard-coded workplace starter.
+        const legacy = normalizeGroupHome(source.groupHome, "group-home-migrated");
+        if (legacy.name) homes = [legacy];
     }
 
     let selectedId = normalizeText(source.selectedGroupHomeId);
@@ -2990,8 +2961,6 @@ function profileForForm() {
 }
 function formatProgramHeading(text, groupHome) {
     const header = getGroupHomeHeaderName(groupHome);
-    // Legacy releases automatically changed this specific factory default when a home was selected.
-    if (text === DEFAULT_WORKPLACE_PROFILE.programName) return header ? `TRANSITIONAL LIVING – ${header}` : "TRANSITIONAL LIVING";
     return String(text || "").replace(/\{home\}/gi, header);
 }
 function formatFormText(text, groupHome) {
@@ -3873,7 +3842,7 @@ async function buildMarImagePdfPages(client) {
         images = [];
         cursor = 640;
         commands = [
-            pdfTextCommand("HAMILTON CENTER", 235, 748, 12, true),
+            pdfTextCommand("", 235, 748, 12, true),
             pdfTextCommand("CLIENT MEDICATION LIST", 221, 730, 11, true),
             `0 0 0 RG 0.6 w 36 720 m 576 720 l S`,
             pdfTextCommand(`Client: ${client.name || ""}`, 40, 703, 9, true),
@@ -6156,7 +6125,7 @@ function parseClientFields(rawText, options = {}) {
         insuranceId: first(/Insurance\s*ID\s*:\s*([^\n]+)/i),
         allergies: between(
             /Allergies\s*:[ \t]*/i,
-            [/Contact\s+Information\s*:/i, /Purpose\s+of\s+Visit/i, /Genoa\s+Pharmacy/i, /Fort\s+Harrison\s+Group\s+Home/i]
+            [/Contact\s+Information\s*:/i, /Purpose\s+of\s+Visit/i, /(?:[A-Za-z][A-Za-z ]*)?Pharmacy\s*:/i, /(?:[A-Za-z][A-Za-z ]*)?Group\s+Home\s*:/i]
         ),
         diagnosis: between(
             /Significant\s+Diagnosis\s*\/\s*History\s*:\s*/i,
@@ -6756,7 +6725,7 @@ function deleteAllClientData() {
 }
 
 function resetApp() {
-    if (!confirm("Reset the entire app to its original defaults, clearing client records and custom group homes while restoring Fort Harrison?")) return;
+    if (!confirm("Reset Consultation Manager to blank defaults and delete its locally saved client and workplace records? Back up your data first.")) return;
     if (!confirm("Final confirmation: current changes will be replaced. Export a backup first if needed.")) return;
 
     state = clone(DEFAULT_STATE);

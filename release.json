@@ -1,11 +1,11 @@
 {
   "name": "p8Work",
-  "version": "1.3.2",
-  "releaseStage": "Beta 4",
-  "buildId": "1.3.2-beta4-editable-consultation-template",
+  "version": "1.0.0",
+  "releaseStage": "Release",
+  "buildId": "1.0.0-stable-privacy-and-unified-settings",
   "hubContract": 1,
   "backupFormat": 1,
-  "cacheGeneration": 17,
+  "cacheGeneration": 19,
   "tools": {
     "shiftview": "0.7.4",
     "transportview": "0.1.6",

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'p8work-shell-v17';
+const CACHE_NAME = 'p8work-shell-v19';
 const SHELL = [
   './','./index.html','./manifest.webmanifest','./release.json',
   './hub/tool-registry.js','./hub/hub-storage.js','./hub/crypto.js','./hub/backup-adapters.js','./hub/consultation-media.js','./hub/workplace-preservation.js','./hub/backup-engine.js','./hub/restore-engine.js','./hub/update-manager.js','./hub/app.js','./hub/file-library.js',

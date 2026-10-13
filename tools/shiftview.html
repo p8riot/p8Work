@@ -2709,6 +2709,18 @@ code {
         color: #555;
     }
 }
+
+/* Settings-only utilities: schedule workspace remains focused on daily scheduling. */
+.setup-tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.settings-theme { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; }
+.settings-theme label { color: var(--ink); font-size: .86rem; font-weight: 800; }
+.settings-theme select { min-height: 40px; width: min(100%, 19rem); border: 1px solid var(--line); border-radius: 9px; padding: .45rem .6rem; color: var(--ink); background: var(--panel); font: inherit; }
+#setupPanelFiles .import-card { margin: 0; box-shadow: none; min-width: 0; }
+#setupPanelFiles .import-actions { justify-content: flex-start; }
+#setupPanelFiles .drop-zone { min-height: 88px; grid-auto-flow: row; text-align: center; }
+@media (max-width: 760px) { .setup-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .setup-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 </style>
 
 
@@ -3261,7 +3273,7 @@ code {
                     <button id="attendanceButton" class="button ghost print-button" type="button" aria-haspopup="dialog">Attendance</button>
                     <button id="hoursButton" class="button ghost print-button" type="button" aria-haspopup="dialog">Hours</button>
                     <button id="disciplineButton" class="button ghost print-button" type="button" aria-haspopup="dialog">Discipline</button>
-                    <button id="setupButton" class="button ghost print-button" type="button" aria-haspopup="dialog">Setup</button>
+                    <button id="setupButton" class="button ghost print-button" type="button" aria-haspopup="dialog">Settings</button>
                     <button id="printButton" class="button ghost print-button" type="button" aria-haspopup="dialog">Print</button>
                 </div>
             </div>
@@ -3311,53 +3323,7 @@ code {
             <h2 id="notesHeading">Standing notes</h2>
             <ul id="scheduleNotes"></ul>
         </section>
-        <section class="import-card" aria-labelledby="importHeading">
-            <div class="section-heading import-compact-head">
-                <div>
-                    <p class="eyebrow">Import &amp; private saves</p>
-                    <h2 id="importHeading">Schedule and workspace data</h2>
-                </div>
-                <div class="import-actions" aria-label="Private workspace save actions">
-                    <button id="importWorkspaceButton" class="button ghost import-save-button" type="button">Import private save</button>
-                    <button id="exportWorkspaceButton" class="button ghost import-save-button" type="button">Export private save</button>
-                    <button id="resetButton" class="button ghost danger-text import-reset" type="button">Reset local data</button>
-                    <input id="workspaceSaveInput" type="file" accept=".json,application/json" hidden>
-                </div>
-            </div>
 
-            <p class="private-save-note">The public app ships with no staff or work locations. Private save files can contain names, locations, contact details, notes, attendance, discipline records, and schedule history. They are plain JSON, not encrypted, so store them securely.</p>
-
-            <div id="dropZone" class="drop-zone compact-drop-zone" tabindex="0" role="button" aria-label="Choose or drop a DOCX schedule">
-                <input id="fileInput" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
-                <strong>Drop .docx or choose file</strong>
-                <span>Parsed only in this browser</span>
-            </div>
-
-            <div id="importAssist" class="import-assist" hidden>
-                <p><strong>I need the schedule month.</strong> The filename did not contain a usable month and year.</p>
-                <label>Schedule month
-                    <input id="anchorMonth" type="month">
-                </label>
-                <button id="continueImport" class="button" type="button">Import schedule</button>
-            </div>
-
-            <div id="importStatus" class="status-box" role="status" aria-live="polite"></div>
-            <div id="sourceSummary" class="source-summary" aria-live="polite"></div>
-            <details>
-                <summary>Import details &amp; cleanup rules</summary>
-                <ul>
-                    <li>A newer .docx for the same named month replaces that schedule. Files are parsed in this browser and are not uploaded to a server.</li>
-                    <li>Shift codes are configurable in <strong>Setup</strong>. This workspace starts with <code>D</code> → 7a–3p, <code>E</code> → 3p–11p, and <code>N</code> → 11p–7a.</li>
-                    <li>Imported staff display as first name + last initial by default. Roster aliases can correct spelling variations and repeated boss typos.</li>
-                    <li>Case, spacing, missing meridiems such as <code>1-9p</code>, and obvious daytime typos such as <code>9P-5P</code> are normalized.</li>
-                    <li>A blank staff cell inside a schedule is treated as <strong>Off</strong>, while the original blank is retained.</li>
-                    <li>The month/year in the filename anchors dates even when the schedule starts in the previous month or ends in the next month.</li>
-                    <li>The original cell text is retained in saved data alongside the cleaned value.</li>
-                    <li>Imported working shifts use your configurable default location. Locations can be added, renamed, deactivated, or removed when unused.</li>
-                    <li>Manual shift edits are saved as overrides, so replacing an imported monthly schedule does not silently erase your adjustments.</li>
-                </ul>
-            </details>
-        </section>
 
     </main>
 
@@ -3371,18 +3337,19 @@ code {
         <div class="setup-shell">
             <div class="setup-head">
                 <div>
-                    <p class="eyebrow">Workspace setup</p>
-                    <h2 id="setupHeading">Customize ShiftView</h2>
+                    <p class="eyebrow">ShiftView settings</p>
+                    <h2 id="setupHeading">ShiftView Settings</h2>
                     <p class="shift-editor-subtitle">Local-only organization settings. Nothing here requires a server or Firebase.</p>
                 </div>
                 <button class="dialog-close" type="button" data-p8-dialog-close aria-label="Close setup">×</button>
             </div>
 
-            <div id="setupTabs" class="setup-tabs" role="tablist" aria-label="Setup sections">
+            <div id="setupTabs" class="setup-tabs" role="tablist" aria-label="ShiftView settings sections">
                 <button id="setupTabGeneral" class="setup-tab" type="button" role="tab" aria-selected="true" aria-controls="setupPanelGeneral" data-setup-tab="general">General</button>
                 <button id="setupTabLocations" class="setup-tab" type="button" role="tab" aria-selected="false" aria-controls="setupPanelLocations" data-setup-tab="locations" tabindex="-1">Locations</button>
                 <button id="setupTabRoster" class="setup-tab" type="button" role="tab" aria-selected="false" aria-controls="setupPanelRoster" data-setup-tab="roster" tabindex="-1">Roster</button>
                 <button id="setupTabCodes" class="setup-tab" type="button" role="tab" aria-selected="false" aria-controls="setupPanelCodes" data-setup-tab="codes" tabindex="-1">Shift codes</button>
+                <button id="setupTabFiles" class="setup-tab" type="button" role="tab" aria-selected="false" aria-controls="setupPanelFiles" data-setup-tab="files" tabindex="-1">Files &amp; appearance</button>
             </div>
 
             <div id="setupBody" class="setup-body">
@@ -3470,6 +3437,86 @@ code {
                         <p class="setup-intro">Code definitions are resolved when a schedule is imported so later changes do not rewrite previously imported shifts.</p>
                         <div id="shiftCodesSetupList" class="setup-list"></div>
                         <button id="addShiftCodeButton" class="button ghost setup-button-small" type="button">Add shift code</button>
+                    </div>
+                </section>
+
+                <section id="setupPanelFiles" class="setup-panel" role="tabpanel" aria-labelledby="setupTabFiles" data-setup-panel="files" hidden>
+                    <div class="setup-section">
+                        <h3>Appearance</h3>
+                        <p class="setup-intro">Choose how ShiftView looks. This does not change the p8Work hub theme or any saved schedules.</p>
+            <div class="settings-theme">
+            <label for="themeSelect">Color theme</label>
+            <select id="themeSelect" aria-label="Color theme">
+                <optgroup label="Automatic">
+                    <option value="system">System light/dark</option>
+                </optgroup>
+                <optgroup label="Light">
+                    <option value="slate">Slate</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="forest">Forest</option>
+                    <option value="plum">Plum</option>
+                    <option value="warm">Warm</option>
+                </optgroup>
+                <optgroup label="Dark">
+                    <option value="slate-dark">Slate dark</option>
+                    <option value="ocean-dark">Ocean dark</option>
+                    <option value="forest-dark">Forest dark</option>
+                    <option value="plum-dark">Plum dark</option>
+                    <option value="warm-dark">Warm dark</option>
+                </optgroup>
+            </select>
+            </div>
+                    </div>
+                    <div class="setup-section">
+                        <h3>Schedule import &amp; private saves</h3>
+                        <p class="setup-intro">Import schedule documents and manage private ShiftView backups in one place. The drop zone works only inside this settings panel.</p>
+        <section class="import-card" aria-labelledby="importHeading">
+            <div class="section-heading import-compact-head">
+                <div>
+                    <p class="eyebrow">Import &amp; private saves</p>
+                    <h2 id="importHeading">Schedule and workspace data</h2>
+                </div>
+                <div class="import-actions" aria-label="Private workspace save actions">
+                    <button id="importWorkspaceButton" class="button ghost import-save-button" type="button">Import private save</button>
+                    <button id="exportWorkspaceButton" class="button ghost import-save-button" type="button">Export private save</button>
+                    <button id="resetButton" class="button ghost danger-text import-reset" type="button">Reset local data</button>
+                    <input id="workspaceSaveInput" type="file" accept=".json,application/json" hidden>
+                </div>
+            </div>
+
+            <p class="private-save-note">The public app ships with no staff or work locations. Private save files can contain names, locations, contact details, notes, attendance, discipline records, and schedule history. They are plain JSON, not encrypted, so store them securely.</p>
+
+            <div id="dropZone" class="drop-zone compact-drop-zone" tabindex="0" role="button" aria-label="Choose or drop a DOCX schedule">
+                <input id="fileInput" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+                <strong>Drop .docx or choose file</strong>
+                <span>Parsed only in this browser</span>
+            </div>
+
+            <div id="importAssist" class="import-assist" hidden>
+                <p><strong>I need the schedule month.</strong> The filename did not contain a usable month and year.</p>
+                <label>Schedule month
+                    <input id="anchorMonth" type="month">
+                </label>
+                <button id="continueImport" class="button" type="button">Import schedule</button>
+            </div>
+
+            <div id="importStatus" class="status-box" role="status" aria-live="polite"></div>
+            <div id="sourceSummary" class="source-summary" aria-live="polite"></div>
+            <details>
+                <summary>Import details &amp; cleanup rules</summary>
+                <ul>
+                    <li>A newer .docx for the same named month replaces that schedule. Files are parsed in this browser and are not uploaded to a server.</li>
+                    <li>Shift codes are configurable in <strong>Settings</strong>. This workspace starts with <code>D</code> → 7a–3p, <code>E</code> → 3p–11p, and <code>N</code> → 11p–7a.</li>
+                    <li>Imported staff display as first name + last initial by default. Roster aliases can correct spelling variations and repeated boss typos.</li>
+                    <li>Case, spacing, missing meridiems such as <code>1-9p</code>, and obvious daytime typos such as <code>9P-5P</code> are normalized.</li>
+                    <li>A blank staff cell inside a schedule is treated as <strong>Off</strong>, while the original blank is retained.</li>
+                    <li>The month/year in the filename anchors dates even when the schedule starts in the previous month or ends in the next month.</li>
+                    <li>The original cell text is retained in saved data alongside the cleaned value.</li>
+                    <li>Imported working shifts use your configurable default location. Locations can be added, renamed, deactivated, or removed when unused.</li>
+                    <li>Manual shift edits are saved as overrides, so replacing an imported monthly schedule does not silently erase your adjustments.</li>
+                </ul>
+            </details>
+        </section>
                     </div>
                 </section>
             </div>
@@ -3782,33 +3829,7 @@ code {
     <section id="printSheet" class="print-sheet" aria-hidden="true"></section>
     <style id="printPageStyle"></style>
 
-    <footer class="app-footer">
-        <div class="footer-tools">
-            <div class="footer-theme">
-            <label for="themeSelect">Color theme</label>
-            <select id="themeSelect" aria-label="Color theme">
-                <optgroup label="Automatic">
-                    <option value="system">System light/dark</option>
-                </optgroup>
-                <optgroup label="Light">
-                    <option value="slate">Slate</option>
-                    <option value="ocean">Ocean</option>
-                    <option value="forest">Forest</option>
-                    <option value="plum">Plum</option>
-                    <option value="warm">Warm</option>
-                </optgroup>
-                <optgroup label="Dark">
-                    <option value="slate-dark">Slate dark</option>
-                    <option value="ocean-dark">Ocean dark</option>
-                    <option value="forest-dark">Forest dark</option>
-                    <option value="plum-dark">Plum dark</option>
-                    <option value="warm-dark">Warm dark</option>
-                </optgroup>
-            </select>
-        </div>
-        </div>
-        <p>ShiftView 0.7.4 Development · Built using the p8Core App Builder</p>
-    </footer>
+
 
   <script>
 // ============================================================================
@@ -7658,7 +7679,7 @@ window.SHIFTVIEW_STARTER = {
         }).join("");
     }
     function setSetupTab(name, moveFocus) {
-        var valid = ["general", "locations", "roster", "codes"];
+        var valid = ["general", "locations", "roster", "codes", "files"];
         if (valid.indexOf(name) < 0)
             name = "general";
         var previous = setupActiveTab;
@@ -9862,8 +9883,7 @@ window.SHIFTVIEW_STARTER = {
             html.push('<section class="print-section-block"><h2 class="print-section-title">Discipline records</h2>' + buildDisciplinePrintHtml(options) + '</section>');
         }
         if (options.footer) {
-            html.push('<footer class="print-document-footer">ShiftView ' + escapeHtml(PRODUCT_VERSION) +
-                ' Development · Built using the p8Core App Builder</footer>');
+            html.push('<footer class="print-document-footer">ShiftView schedule · Generated locally</footer>');
         }
         els.printSheet.className = "print-sheet " + (options.density === "comfortable" ? "comfortable" : "compact");
         els.printSheet.innerHTML = html.join("");

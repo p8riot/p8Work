@@ -31,11 +31,10 @@
   function orderedTools(){ return settings.toolOrder.map(id=>reg.byId[id]).filter(Boolean); }
   function toolCard(tool,compact=false){
     const desc=settings.showDescriptions?`<p>${esc(tool.description)}</p>`:'';
-    const ver=settings.showVersions?`<span class="tool-version">v${esc(tool.version)}</span>`:'';
     const launchQuery=settings.showHomeButtonInTools?'?hub=1':'?hub=1&home=0';
     return `<a class="tool-card${compact?' compact-tool':''}" href="${esc(tool.file)}${launchQuery}" data-tool-id="${esc(tool.id)}">
       <img src="${esc(tool.icon)}" alt="" width="96" height="96">
-      <div class="tool-copy"><h3>${esc(tool.name)}</h3>${desc}<div class="tool-meta">${ver}<span class="open-tool">Open <span aria-hidden="true">→</span></span></div></div>
+      <div class="tool-copy"><h3>${esc(tool.name)}</h3>${desc}<div class="tool-meta"><span class="open-tool">Open <span aria-hidden="true">→</span></span></div></div>
     </a>`;
   }
   function renderHome(){
@@ -49,7 +48,7 @@
       <aside class="dashboard-panel">
         <div class="info-block"><span>Last opened</span><strong>${lastTool?esc(lastTool.name):'No tool opened yet'}</strong><small>${last?esc(formatDateTime(last.openedAt)):''}</small></div>
         <div class="info-block"><span>Master backup</span><strong>${backupMeta?'Backup available':'No backup yet'}</strong><small>${backupMeta?esc(formatDateTime(backupMeta.createdAt)):'Create one from Backups'}</small></div>
-        <div class="info-block"><span>System</span><strong>${tools.length} tools available</strong><small>p8Work 1.3.0 · Beta 4</small></div>
+        <div class="info-block"><span>System</span><strong>${tools.length} tools available</strong><small>All work tools available from Home</small></div>
       </aside>`;
     } else area.innerHTML=`<div class="tool-grid">${tools.map(t=>toolCard(t,false)).join('')}</div>`;
     $$('.tool-card',area).forEach(card=>card.addEventListener('click',()=>storage.recordToolOpen(card.dataset.toolId)));
@@ -77,7 +76,7 @@
   function closeDialog(id){ const d=$(id); if(d.close)d.close(); else d.removeAttribute('open'); }
 
   function populateBackupDialog(selectedIds){
-    const holder=$('#backupToolChoices'); holder.innerHTML=reg.tools.map(t=>`<label class="check-row"><input type="checkbox" value="${esc(t.id)}" ${!selectedIds||selectedIds.includes(t.id)?'checked':''}><span><strong>${esc(t.name)}</strong><small>v${esc(t.version)}</small></span></label>`).join('');
+    const holder=$('#backupToolChoices'); holder.innerHTML=reg.tools.map(t=>`<label class="check-row"><input type="checkbox" value="${esc(t.id)}" ${!selectedIds||selectedIds.includes(t.id)?'checked':''}><span><strong>${esc(t.name)}</strong><small>Included in Master Backup</small></span></label>`).join('');
     $('#backupEncrypted').checked=true; $('#backupUnencrypted').checked=false; $('#backupPasswordWrap').hidden=false; $('#backupPassword').value=''; $('#backupPassword2').value=''; $('#backupWarning').hidden=true;
   }
   function syncBackupEncryptionUI(){ const encrypted=$('#backupEncrypted').checked; $('#backupPasswordWrap').hidden=!encrypted; $('#backupWarning').hidden=encrypted; }
@@ -148,7 +147,7 @@
     $$('[data-theme-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.themeChoice===settings.theme));
     $$('[data-layout-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.layoutChoice===settings.layout));
     $$('[data-size-choice]').forEach(b=>b.classList.toggle('selected',b.dataset.sizeChoice===settings.cardSize));
-    for(const id of ['showGreeting','showDate','showTime','showDescriptions','showVersions','showHomeButtonInTools','rememberLastSection']){const el=$('#'+id);if(el)el.checked=!!settings[id];}
+    for(const id of ['showGreeting','showDate','showTime','showDescriptions','showHomeButtonInTools','rememberLastSection']){const el=$('#'+id);if(el)el.checked=!!settings[id];}
     $$('input[name="clockFormat"]').forEach(r=>r.checked=r.value===settings.clockFormat);
     $('#backupWarningDays').value=settings.backupWarningDays;
     $('#toolOrderList').innerHTML=settings.toolOrder.map((id,i)=>{const t=reg.byId[id];return `<div class="order-row" data-order-id="${esc(id)}"><img src="${esc(t.icon)}" alt=""><span>${esc(t.name)}</span><div><button type="button" class="icon-button move-up" ${i===0?'disabled':''} aria-label="Move ${esc(t.name)} up">↑</button><button type="button" class="icon-button move-down" ${i===settings.toolOrder.length-1?'disabled':''} aria-label="Move ${esc(t.name)} down">↓</button></div></div>`;}).join('');
@@ -164,7 +163,7 @@
   }
 
   function renderAbout(){
-    $('#aboutToolVersions').innerHTML=reg.tools.map(t=>`<div><img src="${esc(t.icon)}" alt=""><span><strong>${esc(t.name)}</strong><small>v${esc(t.version)} · Schema ${esc(t.schemaVersion)} · Hub Contract ${esc(t.hubContract)}</small></span></div>`).join('');
+    $('#aboutToolVersions').innerHTML=reg.tools.map(t=>`<div><img src="${esc(t.icon)}" alt=""><span><strong>${esc(t.name)}</strong><small>Data and backup compatibility maintained internally</small></span></div>`).join('');
     $('#aboutOffline').textContent=navigator.onLine?'Online. Registered tools are cached for offline use after initialization.':'Offline. p8Work is using locally cached application files.';
   }
 
@@ -173,7 +172,7 @@
     $$('[data-theme-choice]').forEach(b=>b.onclick=()=>{settings.theme=b.dataset.themeChoice;saveSettings();});
     $$('[data-layout-choice]').forEach(b=>b.onclick=()=>{settings.layout=b.dataset.layoutChoice;saveSettings();});
     $$('[data-size-choice]').forEach(b=>b.onclick=()=>{settings.cardSize=b.dataset.sizeChoice;saveSettings();});
-    ['showGreeting','showDate','showTime','showDescriptions','showVersions','showHomeButtonInTools','rememberLastSection'].forEach(id=>{$('#'+id).addEventListener('change',e=>{settings[id]=e.target.checked;saveSettings();});});
+    ['showGreeting','showDate','showTime','showDescriptions','showHomeButtonInTools','rememberLastSection'].forEach(id=>{$('#'+id).addEventListener('change',e=>{settings[id]=e.target.checked;saveSettings();});});
     $$('input[name="clockFormat"]').forEach(r=>r.addEventListener('change',e=>{if(e.target.checked){settings.clockFormat=e.target.value;saveSettings();renderClock();renderBackupStatus();}}));
     $('#backupWarningDays').addEventListener('change',e=>{settings.backupWarningDays=Number(e.target.value)||7;saveSettings();});
     $('#restoreDefaultToolOrder').onclick=()=>{settings.toolOrder=reg.tools.map(t=>t.id);saveSettings();};

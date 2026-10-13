@@ -1,7 +1,7 @@
 (function (global) {
   "use strict";
-  const APP_VERSION='1.3.2';
-  const RELEASE='Beta 4';
+  const APP_VERSION='1.0.0';
+  const RELEASE='Release';
   const FORMAT=1;
   const reg=global.P8WORK_REGISTRY;
   const adapters=global.P8WORK_ADAPTERS;

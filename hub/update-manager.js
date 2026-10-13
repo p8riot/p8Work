@@ -1,6 +1,6 @@
 (function (global) {
   "use strict";
-  const CURRENT_BUILD='1.3.2-beta4-editable-consultation-template';
+  const CURRENT_BUILD='1.0.0-stable-privacy-and-unified-settings';
   let registration=null, waiting=null, deferredInstall=null, listeners=[], remoteRelease=null;
   function emit(type, detail) { listeners.forEach(fn=>{ try{fn(type,detail||{});}catch(_){}}); }
   function on(fn) { listeners.push(fn); return ()=>{listeners=listeners.filter(x=>x!==fn);}; }
